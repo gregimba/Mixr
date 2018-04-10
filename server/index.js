@@ -5,7 +5,7 @@ const app = express();
 
 app.use("/", express.static(path.join(__dirname, "../client/dist")));
 
-// Obj. of single drink
+// Obj. of single drink from DB
 app.get("/drinks/:id", (req, res) => {});
 
 // Array of drink matches
