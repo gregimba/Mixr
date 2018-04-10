@@ -1,5 +1,5 @@
 const user = (sequelize, DataTypes) => {
-  const User = sequelize.define('users', {
+  const Users = sequelize.define('user', {
     username: {
       type: DataTypes.STRING,
       unique: true,
@@ -13,18 +13,18 @@ const user = (sequelize, DataTypes) => {
     },
   });
 
-  User.associate = (models) => {
-    User.belongsToMany(models.Drinks, {
+  Users.associate = (models) => {
+    User.belongsToMany(models.Drink, {
       through: 'user_drink',
       foreignKey: 'userId'
     });
-    User.belongsToMany(models.Ingredient, {
-      through: 'user_ing',
+    Users.belongsToMany(models.Ingredient, {
+      through: 'user_ingredient',
       foreignKey: 'userId'
     });
   };
 
-  return User;
+  return Users;
 }
 
 module.exports = user;

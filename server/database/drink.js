@@ -1,4 +1,4 @@
-const drinks = (sequelize, DataTypes) => {
+const drink = (sequelize, DataTypes) => {
   const Drinks = sequelize.define('drinks', {
     name: {
       type: DataTypes.STRING,
@@ -6,7 +6,7 @@ const drinks = (sequelize, DataTypes) => {
     },
     instruction: {
       type: DataTypes.STRING,
-      uniquie: true,
+      unique: true,
     },
     glass: {
       type: DataTypes.STRING,
@@ -18,12 +18,8 @@ const drinks = (sequelize, DataTypes) => {
   });
 
   Drinks.associate = (models) => {
-    Drinks.belongsToMany(models.Users, {
+    Drinks.belongsToMany(models.User, {
       through: 'user_drink',
-      foreignKey: 'drinkId'
-    });
-    Drinks.belongsToMany(models.Ingredient, {
-      through: 'drink_ing',
       foreignKey: 'drinkId'
     });
   };
@@ -32,4 +28,4 @@ const drinks = (sequelize, DataTypes) => {
 }
 
 
-module.exports = drinks;
+module.exports = drink;
