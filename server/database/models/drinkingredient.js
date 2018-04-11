@@ -1,4 +1,3 @@
-'use strict';
 module.exports = (sequelize, DataTypes) => {
   var DrinkIngredient = sequelize.define('DrinkIngredient', {
     measure: DataTypes.STRING
