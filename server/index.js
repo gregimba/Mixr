@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const pg = require("pg");
-const db = require("./database/models")
+const models = require("./database/models")
 
 const app = express();
 
@@ -11,7 +11,7 @@ app.use("/", express.static(path.join(__dirname, "../client/dist")));
 app.get("/drink/:drinkId", (req, res) => {
   let drinkId = req.params.drinkId;
 
-  let drink = Drink.findById({
+  let singleDrinkQuery = Drink.findById({
     where: { drink_id: drinkId },
     include: [{
         model: Drink_ingredient,
@@ -21,7 +21,13 @@ app.get("/drink/:drinkId", (req, res) => {
       }]
   });
 
-  res.send(drink);
+  let singleDrink = {};
+
+  console.log(singleDrinkQuery);
+
+
+
+  res.send(singleDrink);
 });
 
 // Array of drink matches for a user
