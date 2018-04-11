@@ -1,20 +1,36 @@
 const express = require("express");
 const path = require("path");
+const pg = require("pg");
+const db = require("./database/models")
 
 const app = express();
 
 app.use("/", express.static(path.join(__dirname, "../client/dist")));
 
-// Obj. of single drink from DB
-app.get("/drinks/:id", (req, res) => {});
+// Will be quering a drinkId and send back the object of a single drink.
+app.get("/drink/:drinkId", (req, res) => {
+  let drinkId = req.params.drinkId;
 
-// Array of drink matches
-app.get("/user/:id/drinks", (req, res) => {});
+  let drink = Drink.findById({
+    where: { drink_id: drinkId },
+    include: [{
+        model: Drink_ingredient,
+        include: [{
+            model: Ingredient
+          }]
+      }]
+  });
 
-// Adding user ingrindents to the DB
-app.post("/user/:id/ingredients/:id", (req, res) => {});
+  res.send(drink);
+});
 
-// Array of ingredients
-app.get("/user/:id/ingredients", (req, res) => {});
+// Array of drink matches for a user
+app.get("/user/:userId/drinks", (req, res) => {});
+
+// Adding user "liked" ingrindents to the DB
+app.post("/user/:userId/ingredients/:ingredientId", (req, res) => {});
+
+// Array of ingredients matches for user
+app.get("/user/:userId/ingredients", (req, res) => {});
 
 app.listen(3000, () => console.log("Example app listening on port 3000!"));
