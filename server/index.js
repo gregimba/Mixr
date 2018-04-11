@@ -1,4 +1,4 @@
-const models = require('../server/database/index')
+const models = require('../server/database')
 const express = require('express');
 const path = require('path');
 
