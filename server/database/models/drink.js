@@ -1,7 +1,10 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   var Drink = sequelize.define('Drink', {
-    name: DataTypes.STRING,
+    name: {
+      type: Sequelize.STRING,
+      unique: true
+    },
     instruction: DataTypes.STRING,
     glass: DataTypes.STRING,
     image: DataTypes.STRING

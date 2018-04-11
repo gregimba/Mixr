@@ -1,7 +1,7 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   var DrinkIngredient = sequelize.define('DrinkIngredient', {
-    name: DataTypes.STRING
+    measure: DataTypes.STRING
   });
   DrinkIngredient.associate = models => {
     DrinkIngredient.belongsTo(models.Drink, {
