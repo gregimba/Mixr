@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
   var Ingredient = sequelize.define('Ingredient', {
     name: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       unique: true
     }
   });

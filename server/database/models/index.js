@@ -2,12 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
 require('dotenv').config();
 const db = {};
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME,
+  'mixr',
   process.env.DB_USERNAME,
   process.env.DB_PASSWORD,
   {
@@ -36,5 +35,12 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+if (!module.parent) {
+  //run if main module
+  sequelize.sync().then(() => {
+    console.log('yes');
+  });
+}
 
 module.exports = db;
