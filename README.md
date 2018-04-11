@@ -4,16 +4,13 @@ Tinder for drinks
 
 ## Database setup
 
-Open Postgres Console
-`psql postgres`
-Create datbase in postgres
-`CREATE DATABASE mixr;`
+#### Open Postgres and create DB
 
-Go to database directory
-`cd server/database`
+* `psql postgres`
+* `CREATE DATABASE mixr;`
 
-`sequelize init:config`
-Edit config with your db values
+#### Create tables
 
-Create actual tables
-`sequelize db:migrate`
+* `cd server/database` Go to database directory
+* `sequelize init:config` Edit config with your db values
+* `sequelize db:migrate` Create actual tables
