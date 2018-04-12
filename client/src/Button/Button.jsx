@@ -1,28 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './Button.css';
 
-class Button extends Component { 
-  constructor(props) {
-    super(props);
+const Button = (props) => (
+  <div className="buttonContainer">
+      <button className="button" onClick={() => props.like()}>LIKE</button>
+      <button className="button" onClick={() => props.dislike()}>DISLIKE</button>        
+  </div>
 
-  }
-
-  likeButton() {
-    this.props.like();
-  }
-
-  dislikeButton() {
-    this.props.dislike();
-  }
-
-  render(props) {
-    return (
-      <div className="buttonContainer">
-          <button className="button" onClick={this.likeButton.bind(this)}>LIKE</button>
-          <button className="button" onClick={this.dislikeButton.bind(this)}>DISLIKE</button>        
-      </div>
-    )
-  }
-}
+)
 
 export default Button;

@@ -64,9 +64,13 @@ class App extends Component {
     }
   }
 
+  handleExitButton() {
+    
+  }
+
   handleDrinkListEntryClick(target) {
     this.setState({
-      currentDrink: target
+      currentDrink: target,
     })
   }
 
@@ -82,7 +86,7 @@ class App extends Component {
           <Button like={this.handleLikeButton.bind(this)} dislike={this.handleDislikeButton.bind(this)} />
         </div>
         <div className="drink-page"></div>
-          <Drink drink={this.state.currentDrink}/>
+          <Drink drink={this.state.currentDrink} exit={this.handleExitButton.bind(this)}/>
         <div className="sidebar">
           <Sidebar drinks={this.state.drinks} click={this.handleDrinkListEntryClick.bind(this)}/>
         </div>
