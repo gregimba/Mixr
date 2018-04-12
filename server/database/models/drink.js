@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       unique: true
     },
-    instruction: DataTypes.STRING(1024),
+    instruction: DataTypes.TEXT,
     glass: DataTypes.STRING,
     image: DataTypes.STRING
   });
