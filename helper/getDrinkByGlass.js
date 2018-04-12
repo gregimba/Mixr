@@ -1,6 +1,6 @@
 const fs = require('fs');
 const request = require('request');
-let data = fs.readFileSync('./data/glasses.json');
+let data = fs.readFileSync('glasses.json', 'utf8');
 
 wait = ms => {
   var start = new Date().getTime();
@@ -25,7 +25,7 @@ for (let glass of glasses) {
       throw err;
     } else {
       if (res.statusCode === 200) {
-        fs.writeFileSync('./data/' + glass + '.json', res.body);
+        fs.writeFileSync('./data/glasses/' + glass + '.json', res.body);
       }
     }
   });
