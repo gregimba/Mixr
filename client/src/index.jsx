@@ -5,7 +5,6 @@ import Ingredient from './Ingredient/Ingredient';
 import Drink from './Drink/Drink';
 import DrinkListEntry from './DrinkListEntry/DrinkListEntry';
 import Sidebar from './Sidebar/Sidebar';
-import Button from './Button/Button';
 
 class App extends Component {
   constructor(props) {
@@ -65,7 +64,7 @@ class App extends Component {
   }
 
   handleExitButton() {
-    
+
   }
 
   handleDrinkListEntryClick(target) {
@@ -79,11 +78,10 @@ class App extends Component {
     return (
       <div className="App">
         <div className="ingredient-page">
-          <img />
-          <Ingredient ingredient={this.state.currentIndredient.name}/>
-        </div>
-        <div className="button-function">
-          <Button like={this.handleLikeButton.bind(this)} dislike={this.handleDislikeButton.bind(this)} />
+          <img src={'images url goes here....'}/>
+          <Ingredient ingredient={this.state.currentIndredient.name}
+                      like={this.handleLikeButton.bind(this)} 
+                      dislike={this.handleDislikeButton.bind(this)}/>
         </div>
         <div className="drink-page"></div>
           <Drink drink={this.state.currentDrink} exit={this.handleExitButton.bind(this)}/>

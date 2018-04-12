@@ -11,7 +11,7 @@ const Drink = (props) => (
     <div className="drink-instruction"></div>
     <div className="drink-ingredients"></div>
     <div className="drink-glass"></div>    
-    <div className="exit-button" onClick={() => props.exit()}>x</div>
+    <span className="exit-button" onClick={() => props.exit()}>&times;</span>
   </div>
 )
 

@@ -1,0 +1,12 @@
+.exit-button {
+  color: #AA9;
+  font-weight: bold;
+  float: left;
+  cursor: pointer;
+  font-size: 1em;
+  margin-right: 5px;
+}
+
+.exit-button:hover {
+  color: #AC2500;
+}
