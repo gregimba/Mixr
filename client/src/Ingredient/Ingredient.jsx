@@ -7,7 +7,6 @@ const Ingredient = (props) => (
       <div className="ingredient-name">{props.ingredient}</div>
     </div>
   </div>
-
 )
 
 export default Ingredient;

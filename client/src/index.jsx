@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import axios from 'axios';
 import Ingredient from './Ingredient/Ingredient';
 import Drink from './Drink/Drink';
 import DrinkListEntry from './DrinkListEntry/DrinkListEntry';
@@ -12,27 +13,60 @@ class App extends Component {
 
     this.state = {
       ingredients: [],
+      likedIngredients: [],
       currentIndredient = {},
-      drinks = [],
+      MatchedDrinks = [], 
+      currentDrink = {},
     }
-
   }
 
-  // getRandomIngredient(ingredients) {
-  //   let indregient = ingredients[Math.floor(Math.random() * ingredients.length)]
-  //   return indregient;
-  // }
-
-  handleLikeButton() {
-    //push the matched drink into the drinks array in the state
-    this.setState({
-      currentIndredient: getRandomIngredient(this.state.ingredients)
+  componentDidMount() {
+    axios.get('url goes here...').then(res => {
+      this.setState({
+        ingredients: res.data //??
+      });
+    }). catch(err => {
+      console.log(err);
     })
   }
 
+  getRandomIngredient(ingredientList) {
+    var ingredient = ingredientList[Math.floor(Math.random() * ingredientList.length)];
+    return ingredient;
+  }
+
+  handleLikeButton() {
+    let likedIngredients = this.state.likedIngredients;
+    let currentIndredient = this.state.currentIndredient;
+    let ingredients = this.state.ingredients;
+    likedIngredients.push(currentIndredient);
+    
+    let randomIngredient = this.getRandomIngredient(ingredients);
+
+    while (!likedIngredients.includes(randomIngredient)) {
+      randomIngredient = this.getRandomIngredient(ingredients);
+      this.setState({
+        currentIndredient: randomIngredient
+      })
+    }
+  }
+
   handleDislikeButton() {
+    let likedIngredients = this.state.likedIngredients;
+    let currentIndredient = this.state.currentIndredient;
+    let ingredients = this.state.ingredients;    
+    let randomIngredient = this.getRandomIngredient(ingredients);
+    while (!likedIngredients.includes(randomIngredient)) {
+      randomIngredient = this.getRandomIngredient(ingredients);
+      this.setState({
+        currentIndredient: randomIngredient
+      })
+    }
+  }
+
+  handleDrinkListEntryClick(target) {
     this.setState({
-      currentIndredient: getRandomIngredient(this.state.ingredients)
+      currentDrink: target
     })
   }
 
@@ -48,9 +82,9 @@ class App extends Component {
           <Button like={this.handleLikeButton.bind(this)} dislike={this.handleDislikeButton.bind(this)} />
         </div>
         <div className="drink-page"></div>
-          <Drink />
+          <Drink drink={this.state.currentDrink}/>
         <div className="sidebar">
-          <Sidebar drinks={this.state.drinks}/>
+          <Sidebar drinks={this.state.drinks} click={this.handleDrinkListEntryClick.bind(this)}/>
         </div>
       </div>
     )

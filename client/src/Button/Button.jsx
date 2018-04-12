@@ -7,7 +7,6 @@ class Button extends Component {
 
   }
 
-
   likeButton() {
     this.props.like();
   }
@@ -15,7 +14,6 @@ class Button extends Component {
   dislikeButton() {
     this.props.dislike();
   }
-
 
   render(props) {
     return (
@@ -26,6 +24,5 @@ class Button extends Component {
     )
   }
 }
-
 
 export default Button;
