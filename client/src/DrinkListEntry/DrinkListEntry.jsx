@@ -1,15 +1,14 @@
 import React from 'react';
-import './match.css';
+import './DrinkListEntry.css';
 
-const Match = (props) => (
+const DrinkListEntry = (props) => (
   <div className="drink-list-entry" onClick={}>
     <div className="drink-images">
       <img className="drink-object" />
     </div> 
       <div className="drink-title"></div>
   </div>
-
 )
 
 
-export default Match;
+export default DrinkListEntry;

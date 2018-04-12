@@ -1,7 +1,7 @@
 import React from 'react';
-import './main.css';
+import './Ingredient.css';
 
-const Main = (props) => (
+const Ingredient = (props) => (
   <div className="ingredient-container">
     <div className="ingredient">
       <div className="ingredient-name">{props.ingredient}</div>
@@ -10,4 +10,4 @@ const Main = (props) => (
 
 )
 
-export default Main;
+export default Ingredient;

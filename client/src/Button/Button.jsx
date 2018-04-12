@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import './swipe.css';
+import './Button.css';
 
-class Swipe extends Component { 
+class Button extends Component { 
   constructor(props) {
     super(props);
 
@@ -28,4 +28,4 @@ class Swipe extends Component {
 }
 
 
-export default Swipe;
+export default Button;

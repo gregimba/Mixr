@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import Main from './main/main';
-import Drink from './drink/drink';
-import Match from './match/match';
-import Sidebar from './sidebar/sidebar';
-import Swipe from './swipe/swipe';
+import Ingredient from './Ingredient/Ingredient';
+import Drink from './Drink/Drink';
+import DrinkListEntry from './DrinkListEntry/DrinkListEntry';
+import Sidebar from './Sidebar/Sidebar';
+import Button from './Button/Button';
 
 class App extends Component {
   constructor(props) {
@@ -18,10 +18,10 @@ class App extends Component {
 
   }
 
-  getRandomIngredient(ingredients) {
-    let indregient = ingredients[Math.floor(Math.random() * ingredients.length)]
-    return indregient;
-  }
+  // getRandomIngredient(ingredients) {
+  //   let indregient = ingredients[Math.floor(Math.random() * ingredients.length)]
+  //   return indregient;
+  // }
 
   handleLikeButton() {
     //push the matched drink into the drinks array in the state
@@ -40,14 +40,15 @@ class App extends Component {
   render(props) {
     return (
       <div className="App">
-        <div className="main_swipe">
+        <div className="ingredient-page">
           <img />
-          <Main ingredient={this.state.currentIndredient.name}/>
+          <Ingredient ingredient={this.state.currentIndredient.name}/>
         </div>
-        <div className="like-function">
-          <Swipe like={this.handleLikeButton.bind(this)} dislike={this.handleDislikeButton.bind(this)} />
+        <div className="button-function">
+          <Button like={this.handleLikeButton.bind(this)} dislike={this.handleDislikeButton.bind(this)} />
         </div>
-        <div className="drinkpage"></div>
+        <div className="drink-page"></div>
+          <Drink />
         <div className="sidebar">
           <Sidebar drinks={this.state.drinks}/>
         </div>
