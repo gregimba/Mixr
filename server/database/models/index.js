@@ -45,7 +45,7 @@ db.Sequelize = Sequelize;
 if (!module.parent) {
   //run if main module
   sequelize.sync().then(() => {
-    console.log('yes');
+    console.log('Succcessfully built tables');
   });
 }
 
