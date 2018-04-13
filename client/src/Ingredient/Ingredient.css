@@ -1,5 +1,12 @@
 .ingredient-container {
+  cursor: alias;
+  height: 600px;
+  width: 500px;
+  perspective: 1000px;
+  position: relative;
   margin: auto;
+  transition: ease-in;
+  word-wrap: break-word;
 }
 
 .buttonContainer {

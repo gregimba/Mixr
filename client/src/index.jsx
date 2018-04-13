@@ -16,13 +16,15 @@ class App extends Component {
       currentIndredient = {},
       MatchedDrinks = [], 
       currentDrink = {},
+      isMatched = false,
     }
   }
 
   componentDidMount() {
     axios.get('url goes here...').then(res => {
       this.setState({
-        ingredients: res.data //??
+        ingredients: res.data, //??
+        currentIndredient: this.getRandomIngredient(this.state.ingredients),
       });
     }). catch(err => {
       console.log(err);
@@ -39,9 +41,7 @@ class App extends Component {
     let currentIndredient = this.state.currentIndredient;
     let ingredients = this.state.ingredients;
     likedIngredients.push(currentIndredient);
-    
     let randomIngredient = this.getRandomIngredient(ingredients);
-
     while (!likedIngredients.includes(randomIngredient)) {
       randomIngredient = this.getRandomIngredient(ingredients);
       this.setState({
@@ -64,12 +64,15 @@ class App extends Component {
   }
 
   handleExitButton() {
-
+    this.setState({
+      isMatched: false
+    })
   }
 
   handleDrinkListEntryClick(target) {
     this.setState({
       currentDrink: target,
+      isMatched: true,
     })
   }
 
@@ -86,7 +89,7 @@ class App extends Component {
         <div className="drink-page"></div>
           <Drink drink={this.state.currentDrink} exit={this.handleExitButton.bind(this)}/>
         <div className="sidebar">
-          <Sidebar drinks={this.state.drinks} click={this.handleDrinkListEntryClick.bind(this)}/>
+          <Sidebar drinks={this.state.MatchedDrinks} click={this.handleDrinkListEntryClick.bind(this)}/>
         </div>
       </div>
     )
