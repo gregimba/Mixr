@@ -1,0 +1,7 @@
+.drink-list {
+  float: right;
+  height: auto; 
+  margin: auto;
+  border: 2px solid black;
+  text-align: center;
+}
