@@ -11,13 +11,14 @@ class App extends Component {
     super(props);
 
     this.state = {
+      view: 'ingredient',
       ingredients: [],
       likedIngredients: [],
       currentIndredient = {},
       MatchedDrinks = [], 
       currentDrink = {},
-      isMatched = false,
     }
+
   }
 
   componentDidMount() {
@@ -65,32 +66,47 @@ class App extends Component {
 
   handleExitButton() {
     this.setState({
-      isMatched: false
+      view: 'ingredient',
+      currentIndredient: this.getRandomIngredient(ingredients)
     })
   }
 
-  handleDrinkListEntryClick(target) {
+  changeView(option, target) {
+    let MatchedDrinks = this.state.MatchedDrinks;
     this.setState({
-      currentDrink: target,
-      isMatched: true,
-    })
+      view: option,
+      currentDrink: MatchedDrinks[MatchedDrinks.indexOf(target)]
+    });
   }
 
-
-  render(props) {
-    return (
-      <div className="App">
+  renderView() {
+    const {view} = this.state;
+    if (view === 'ingredient') {
+      return 
         <div className="ingredient-page">
           <img src={'images url goes here....'}/>
           <Ingredient ingredient={this.state.currentIndredient.name}
                       like={this.handleLikeButton.bind(this)} 
                       dislike={this.handleDislikeButton.bind(this)}/>
         </div>
-        <div className="drink-page"></div>
-          <Drink drink={this.state.currentDrink} exit={this.handleExitButton.bind(this)}/>
+    } else {
+        return 
+          <div className="drink-page">
+          <Drink drink={this.state.currentDrink} 
+                 exit={this.handleExitButton.bind(this)}
+                 handleClick={() => this.handleExitButton()}/>
+          </div>
+      }
+  } 
+
+  render(props) {
+    return (
+      <div className="App">
         <div className="sidebar">
-          <Sidebar drinks={this.state.MatchedDrinks} click={this.handleDrinkListEntryClick.bind(this)}/>
+          <Sidebar drinks={this.state.MatchedDrinks} 
+                   handleClick={this.changeView.bind(this)}/>
         </div>
+        <div className="main">{this.renderView()}</div>
       </div>
     )
   }
