@@ -1,36 +1,25 @@
 const express = require("express");
 const path = require("path");
 const pg = require("pg");
-const models = require("./database/models");
-const bodyParser = require('body-parser');
-const Sequelize = require('sequelize');
-
-// console.log(models.sequelize)
+const models = require("./database/models")
 
 const app = express();
 
 app.use("/", express.static(path.join(__dirname, "../client/dist")));
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
-// app.use(function(req, res, next) {
-//   req.models = require('./database/models');
-//   next();
-// });
 
 // Will be quering a drinkId and send back the object of a single drink.
 app.get("/drink/:drinkId", (req, res) => {
   let drinkId = req.params.drinkId;
-  console.log('******DRINK ID:', drinkId)
-  console.log("**********", typeof models.DrinkIngredient)
 
-  let singleDrinkQuery = models.DrinkIngredient.findAll({
-    where: { drinkId: drinkId },
+  let singleDrinkQuery = Drink.findById({
+    where: { drink_id: drinkId },
     include: [{
-        model: 'DrinkIngredient',
+        model: Drink_ingredient,
         include: [{
-            model: 'Ingredient'
+            model: Ingredient
           }]
       }]
+<<<<<<< HEAD
   })
   .then( drink => {
     let singleDrink = Object.assign(
@@ -90,46 +79,31 @@ app.get("/user/:userId/drinks", (req, res) => {
       model: Drink
     }]
   }).then( user => {
+=======
+  });
+>>>>>>> parent of 373a5fe... rebase: working on the single drink query
 
-  })
-
-  let userDrinksList = [];
   let singleDrink = {};
 
-// forEach drink that belong to a user
-  singleDrink.Drink.id;
-  singleDrink.Drink.name;
-  singleDrink.Drink.image;
+  console.log(singleDrinkQuery);
 
-  res.send(userDrinksList)
-});
 
-// Adding user "liked" ingrindents to the DB
-app.post("/user/:userId/ingredients/:ingredientId", (req, res) => {
-
-  let userIdToStore = req.params.userId;
-  let username = req.body.username;
-  let ingredientIdToStore = req.params.ingredientId;
-  let ingredient = req.body.ingredient;
-
+<<<<<<< HEAD
   // Add ingredient to user in interjoin table
   res.sendStatus(200);
+=======
+
+  res.send(singleDrink);
+>>>>>>> parent of 373a5fe... rebase: working on the single drink query
 });
 
-// Array of ingredients matches for user, returns array of all 'liked' ingredients
-app.get("/user/:userId/ingredients", (req, res) => {
-  let userId = req.params.userId;
+// Array of drink matches for a user
+app.get("/user/:userId/drinks", (req, res) => {});
 
-  let likedIngredientList = User.findAll({
-    where: { userId: userId},
-    include:[{
-      model: Ingredient,
+// Adding user "liked" ingrindents to the DB
+app.post("/user/:userId/ingredients/:ingredientId", (req, res) => {});
 
-    }]
-  })
-});
-
-// Returns a Single "non-liked" ingredient (reverse of "liked" ingredients list)
-app.get("/user/:userId/ingredient", (req, res) => {});
+// Array of ingredients matches for user
+app.get("/user/:userId/ingredients", (req, res) => {});
 
 app.listen(3000, () => console.log("Example app listening on port 3000!"));
