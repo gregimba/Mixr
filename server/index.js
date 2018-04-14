@@ -33,7 +33,7 @@ app.get("/drink/:drinkId", (req, res) => {
       }]
   })
   .then( drink => {
-    return Object.assign(
+    let singleDrink = Object.assign(
       {},
       {
         drinkId: drink.id,
@@ -41,9 +41,14 @@ app.get("/drink/:drinkId", (req, res) => {
         drinkInstructions: drink.instructions,
         drinkGlass: drink.glass,
         drinkImage: drink.image,
-        ingredients: drink.ingredient
+// ??? Not sure if this will work.
+// Trying to match ingredient name with measurements for a single drink.
+        drinkIngredients: drink.ingredient.map( ingredient => {
+
+        })
       }
     )
+    return singleDrink;
   })
   .catch(err => {
     console.log(err)
@@ -108,7 +113,7 @@ app.post("/user/:userId/ingredients/:ingredientId", (req, res) => {
   let ingredient = req.body.ingredient;
 
   // Add ingredient to user in interjoin table
-
+  res.sendStatus(200);
 });
 
 // Array of ingredients matches for user, returns array of all 'liked' ingredients
