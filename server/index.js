@@ -1,28 +1,59 @@
-const models = require('../server/database')
-const express = require('express');
-const path = require('path');
 const express = require("express");
 const path = require("path");
 const pg = require("pg");
-const models = require("./database/models")
+const models = require("./database/models");
+const bodyParser = require('body-parser');
+const Sequelize = require('sequelize');
+
+// console.log(models.sequelize)
 
 const app = express();
 
 app.use("/", express.static(path.join(__dirname, "../client/dist")));
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+// app.use(function(req, res, next) {
+//   req.models = require('./database/models');
+//   next();
+// });
 
 // Will be quering a drinkId and send back the object of a single drink.
 app.get("/drink/:drinkId", (req, res) => {
   let drinkId = req.params.drinkId;
+  console.log('******DRINK ID:', drinkId)
+  console.log("**********", typeof models.DrinkIngredient)
 
-  let singleDrinkQuery = Drink.findById({
-    where: { drink_id: drinkId },
+  let singleDrinkQuery = models.DrinkIngredient.findAll({
+    where: { drinkId: drinkId },
     include: [{
-        model: Drink_ingredient,
+        model: 'DrinkIngredient',
         include: [{
-            model: Ingredient
+            model: 'Ingredient'
           }]
       }]
-  });
+  })
+  .then( drink => {
+    let singleDrink = Object.assign(
+      {},
+      {
+        drinkId: drink.id,
+        drinkName: drink.name,
+        drinkInstructions: drink.instructions,
+        drinkGlass: drink.glass,
+        drinkImage: drink.image,
+// ??? Not sure if this will work.
+// Trying to match ingredient name with measurements for a single drink.
+        drinkIngredients: drink.ingredient.map( ingredient => {
+
+        })
+      }
+    )
+    return singleDrink;
+  })
+  .catch(err => {
+    console.log(err)
+  })
+
   // Create a new object which contains the relevant information from the query
   // let singleDrink = {};
   // let singleDrinkIngredientsAndMeasures = {};
@@ -59,26 +90,46 @@ app.get("/user/:userId/drinks", (req, res) => {
       model: Drink
     }]
   }).then( user => {
-  });
 
+  })
+
+  let userDrinksList = [];
   let singleDrink = {};
 
-  console.log(singleDrinkQuery);
+// forEach drink that belong to a user
+  singleDrink.Drink.id;
+  singleDrink.Drink.name;
+  singleDrink.Drink.image;
 
+  res.send(userDrinksList)
+});
+
+// Adding user "liked" ingrindents to the DB
+app.post("/user/:userId/ingredients/:ingredientId", (req, res) => {
+
+  let userIdToStore = req.params.userId;
+  let username = req.body.username;
+  let ingredientIdToStore = req.params.ingredientId;
+  let ingredient = req.body.ingredient;
 
   // Add ingredient to user in interjoin table
   res.sendStatus(200);
-
-  res.send(singleDrink);
 });
 
-// Array of drink matches for a user
-app.get("/user/:userId/drinks", (req, res) => {});
+// Array of ingredients matches for user, returns array of all 'liked' ingredients
+app.get("/user/:userId/ingredients", (req, res) => {
+  let userId = req.params.userId;
 
-// Adding user "liked" ingrindents to the DB
-app.post("/user/:userId/ingredients/:ingredientId", (req, res) => {});
+  let likedIngredientList = User.findAll({
+    where: { userId: userId},
+    include:[{
+      model: Ingredient,
 
-// Array of ingredients matches for user
-app.get("/user/:userId/ingredients", (req, res) => {});
+    }]
+  })
+});
+
+// Returns a Single "non-liked" ingredient (reverse of "liked" ingredients list)
+app.get("/user/:userId/ingredient", (req, res) => {});
 
 app.listen(3000, () => console.log("Example app listening on port 3000!"));
