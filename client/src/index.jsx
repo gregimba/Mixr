@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 import Ingredient from './Ingredient/Ingredient';
 import Drink from './Drink/Drink';
-import DrinkListEntry from './DrinkListEntry/DrinkListEntry';
+// import DrinkListEntry from './DrinkListEntry/DrinkListEntry';
 import Sidebar from './Sidebar/Sidebar';
 
 class App extends Component {
@@ -15,8 +15,8 @@ class App extends Component {
       ingredients: ['oj', 'milk', 'water', 'coke', 'beer', 'sprite'],
       likedIngredients: [],
       currentIndredient: {},
-      MatchedDrinks: [],
-      // MatchedDrinks: ['ultimate drink', 'awesome soda', 'nasty milkyWay'],
+      // MatchedDrinks: [],
+      MatchedDrinks: ['ultimate drink', 'awesome soda', 'nasty milkyWay'],
       currentDrink: {}
     };
   }
@@ -113,10 +113,11 @@ class App extends Component {
     return (
       <div className="App">
         <div className="sidebar">
-          <Sidebar
-            drinks={this.state.MatchedDrinks}
-            handleClick={this.changeView.bind(this)}
-          />
+          {this.state.MatchedDrinks.map(drink => {
+            return (
+              <Sidebar drink={drink} handleClick={this.changeView.bind(this)} />
+            );
+          })}
         </div>
         <div className="main">{this.renderView()}</div>
       </div>
