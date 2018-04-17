@@ -104,14 +104,32 @@ app.post("/user/:userId/ingredients/:ingredientId", (req, res) => {
 
 // Array of ingredients matches for user, returns array of all 'liked' ingredients
 app.get("/user/:userId/ingredients", (req, res) => {
-  let userId = req.params.userId;
+  let userID = req.params.userId;
 
-  let likedIngredientList = User.findAll({
-    where: { userId: userId},
-    include:[{
-      model: Ingredient,
-
-    }]
+  models.User.findAll({
+    where: { id: userID },
+    include: [{
+        model: models.Ingredient,
+        attributes: ['id', 'name'],
+      }]
+  })
+  .then( user => {
+    let likedIngredientList = [];
+    user[0].Ingredients.forEach( ingredient => {
+      let userIngredient = Object.assign(
+        {},
+        {
+          ingredientId: ingredient.dataValues.id,
+          ingredientName: ingredient.dataValues.name,
+    //       drinkImage: drink.dataValues.image
+        }
+      )
+      likedIngredientList.push(userIngredient);
+    })
+    res.send(likedIngredientList)
+  })
+  .catch( err => {
+    console.log("!!!Error:", err)
   })
 });
 
