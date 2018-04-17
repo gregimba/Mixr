@@ -3,3 +3,4 @@ client/dist/bundle.js
 .env
 config.json
 data
+.DS_Store
