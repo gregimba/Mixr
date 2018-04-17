@@ -16,48 +16,48 @@ app.use(bodyParser.json());
 // Will be quering a drinkId and send back the object of a single drink.
 app.get("/drink/:drinkId", (req, res) => {
   let drinkID = req.params.drinkId;
-  let drinkInfo = {};
-  let singleDrinkIngredients = [];
-  console.log('******DRINK ID:', drinkId)
-  console.log("**********", typeof models.DrinkIngredient)
 
   models.Drink.find({
     where: { id: drinkID}
   })
-  .then(drinkIn => {
-    // console.log(JSON.stringify(drinkIn))
-    return drinkInfo = JSON.stringify(drinkIn);
+  .then(drinkInfo => {
+    models.DrinkIngredient.findAll({
+      where: { drinkId: drinkID },
+      include: [{
+        model: models.Ingredient
+      }]
+    })
+    .then( singleDrinkIngredients => {
+
+      let drinkIngredients = {};
+
+      singleDrinkIngredients.forEach( ingredient => {
+
+        let ingredientName = ingredient.Ingredient.dataValues.name;
+        let ingredientMeasure = ingredient.dataValues.measure;
+
+        drinkIngredients[ingredientName] = ingredientMeasure;
+      })
+
+      let singleDrink = Object.assign(
+        {},
+        {
+          drinkId: drinkInfo.id,
+          drinkName: drinkInfo.name,
+          drinkInstructions: drinkInfo.instructions,
+          drinkGlass: drinkInfo.glass,
+          drinkImage: drinkInfo.image,
+          DrinkIngredients: drinkIngredients,
+        })
+        res.json(singleDrink)
+    })
+    .catch(err => {
+      console.log("Error:", err)
+    });
   })
   .catch( err => {
     console.log("Error:", err)
   });
-
-  models.DrinkIngredient.findAll({
-    where: { drinkId: drinkID },
-    // include: [{
-        // model: models.Drink,
-        include: [{
-            model: models.Ingredient
-          }]
-      // }]
-  })
-  .then( drink => {
-    // console.log(JSON.stringify(drink));
-    return singleDrinkIngredients = JSON.stringify(drink)
-    // res.json(drink);
-  })
-  .catch(err => {
-    console.log("Error:", err)
-  });
-
-  console.log("DRINK INFO:", drinkInfo)
-  console.log("INGREDIENTS:", singleDrinkIngredients)
-  let singleDrink = Object.assign(
-    {},
-    {
-      // drinkId: drinkInfo.id,
-    })
-  res.send(singleDrink)
 });
 
 // Array of drink matches for a user
@@ -110,7 +110,41 @@ app.get("/user/:userId/ingredients", (req, res) => {
     where: { id: userID },
     include: [{
         model: models.Ingredient,
-        attributes: ['id', 'name'],
+        attributes: ['id', 'name'], // 'image'
+      }]
+  })
+  .then( user => {
+    let likedIngredientList = [];
+    user[0].Ingredients.forEach( ingredient => {
+      let userIngredient = Object.assign(
+        {},
+        {
+          ingredientId: ingredient.dataValues.id,
+          ingredientName: ingredient.dataValues.name,
+    //       drinkImage: drink.dataValues.image
+        }
+      )
+      likedIngredientList.push(userIngredient);
+    })
+    res.send(likedIngredientList)
+  })
+  .catch( err => {
+    console.log("!!!Error:", err)
+  });
+});
+
+// Returns a Single "non-liked" ingredient (reverse of "liked" ingredients list)
+app.get("/user/:userId/ingredient", (req, res) => {
+  let userID = req.params.userId;
+  const Op = Sequelize.Op
+
+  models.User.findAll({
+    where: {
+      [Op.not]: [{ id: userID }]
+    },
+    include: [{
+        model: models.Ingredient,
+        attributes: ['id', 'name'],  // 'image'
       }]
   })
   .then( user => {
@@ -132,9 +166,6 @@ app.get("/user/:userId/ingredients", (req, res) => {
     console.log("!!!Error:", err)
   })
 });
-
-// Returns a Single "non-liked" ingredient (reverse of "liked" ingredients list)
-app.get("/user/:userId/ingredient", (req, res) => {});
 
 // models.sequelize.sync().then(() => {
   app.listen(3000, () => console.log("Example app listening on port 3000!"));
