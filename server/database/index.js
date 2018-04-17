@@ -1,9 +1,9 @@
-const Sequelize = require('sequelize');
-const user = require('./user');
-const ingredient = require('./ingredient');
-const drink = require('./drink');
-const drink_ingredient = require('./drink_ingredient');
 require('dotenv').config();
+var fs = require('fs');
+var path = require('path');
+var Sequelize = require('sequelize');
+var basename = 'index.js';
+var db = {};
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -15,28 +15,25 @@ const sequelize = new Sequelize(
   }
 );
 
-const models = {
-  User: user,
-  Drink: drink,
-  Ingredient: ingredient,
-  Drink_ingredient: drink_ingredient
-};
+fs
+  .readdirSync(__dirname)
+  .filter(function(file) {
+    return (
+      file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js'
+    );
+  })
+  .forEach(function(file) {
+    var model = sequelize['import'](path.join(__dirname, file));
+    db[model.name] = model;
+  });
 
-Object.keys(models).forEach(modelName => {
-  if ('associate' in models[modelName]) {
-    models[modelName].associate(models);
+Object.keys(db).forEach(function(modelName) {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
   }
 });
 
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log('Connection has been established successfully.');
-  })
-  .catch(err => {
-    console.error('Unable to connect to the database:', err);
-  });
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-models.sequelize = sequelize;
-
-module.exports = models;
+module.exports = db;
