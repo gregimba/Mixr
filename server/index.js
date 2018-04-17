@@ -12,10 +12,6 @@ const app = express();
 app.use("/", express.static(path.join(__dirname, "../client/dist")));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-// app.use(function(req, res, next) {
-//   req.models = require('./database/models');
-//   next();
-// });
 
 // Will be quering a drinkId and send back the object of a single drink.
 app.get("/drink/:drinkId", (req, res) => {
@@ -23,61 +19,22 @@ app.get("/drink/:drinkId", (req, res) => {
   console.log('******DRINK ID:', drinkId)
   console.log("**********", typeof models.DrinkIngredient)
 
-  let singleDrinkQuery = models.DrinkIngredient.findAll({
-    where: { drinkId: drinkId },
-    include: [{
-        model: 'DrinkIngredient',
-        include: [{
-            model: 'Ingredient'
-          }]
-      }]
+  let singleDrinkQuery = models.Drink.findAll({
+    where: { id: drinkId },
+    // include: [{
+        // model: 'DrinkIngredient',
+    //     include: [{
+            // model: 'Ingredient'
+    //       }]
+      // }]
   })
   .then( drink => {
-    let singleDrink = Object.assign(
-      {},
-      {
-        drinkId: drink.id,
-        drinkName: drink.name,
-        drinkInstructions: drink.instructions,
-        drinkGlass: drink.glass,
-        drinkImage: drink.image,
-// ??? Not sure if this will work.
-// Trying to match ingredient name with measurements for a single drink.
-        drinkIngredients: drink.ingredient.map( ingredient => {
-
-        })
-      }
-    )
-    return singleDrink;
+    console.log(JSON.stringify(drink));
+    res.json(drink);
   })
   .catch(err => {
     console.log(err)
   })
-
-  // Create a new object which contains the relevant information from the query
-  // let singleDrink = {};
-  // let singleDrinkIngredientsAndMeasures = {};
-  //
-  // console.log(singleDrinkQuery);
-  //
-  // if(singleDrink === undefined){
-  //   singleDrink.drinkId = singleDrinkQuery.id;
-  //   singleDrink.drinkName = singleDrinkQuery.name;
-  //   singleDrink.drinkInstruction = singleDrinkQuery.instrction;
-  //   singleDrink.drinkGlass = singleDrinkQuery.glass;
-  //   singleDrink.drinkImage = singleDrinkQuery.image;
-  //
-  //   // singleDrinkIngredientsAndMeasures.ingredientId = singleDrinkQuery.Ingredient.id;
-  //   // singleDrinkIngredientsAndMeasures.ingredientName = singleDrinkQuery.Ingredient.name;
-  //   //
-  //   // singleDrink.ingredient = singleDrinkQuery.DrinkIngredient.measure;
-  //
-  //   console.log(singleDrink);
-  // }
-
-  console.log(singleDrinkQuery)
-
-  res.send(singleDrinkQuery);
 });
 
 // Array of drink matches for a user
@@ -132,4 +89,6 @@ app.get("/user/:userId/ingredients", (req, res) => {
 // Returns a Single "non-liked" ingredient (reverse of "liked" ingredients list)
 app.get("/user/:userId/ingredient", (req, res) => {});
 
-app.listen(3000, () => console.log("Example app listening on port 3000!"));
+models.sequelize.sync().then(() => {
+  app.listen(3000, () => console.log("Example app listening on port 3000!"));
+});

@@ -1,7 +1,7 @@
 {
   "development": {
-    "username": "jakehsiao",
-    "password": "jakehsiao",
+    "username": "Ale",
+    "password": "Farm42",
     "database": "mixr",
     "host": "127.0.0.1",
     "dialect": "postgres"
