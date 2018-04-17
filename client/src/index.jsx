@@ -45,27 +45,21 @@ class App extends Component {
     let likedIngredients = this.state.likedIngredients;
     let currentIndredient = this.state.currentIndredient;
     let ingredients = this.state.ingredients;
-    likedIngredients.push(currentIndredient);
+    likedIngredients.push(
+      ingredients.splice(ingredients.indexOf(currentIndredient), 1)
+    );
     let randomIngredient = this.getRandomIngredient(ingredients);
-    while (!likedIngredients.includes(randomIngredient)) {
-      randomIngredient = this.getRandomIngredient(ingredients);
-      this.setState({
-        currentIndredient: randomIngredient
-      });
-    }
+    this.setState({
+      currentIndredient: randomIngredient
+    });
   }
 
   handleDislikeButton() {
-    let likedIngredients = this.state.likedIngredients;
-    let currentIndredient = this.state.currentIndredient;
     let ingredients = this.state.ingredients;
     let randomIngredient = this.getRandomIngredient(ingredients);
-    while (!likedIngredients.includes(randomIngredient)) {
-      randomIngredient = this.getRandomIngredient(ingredients);
-      this.setState({
-        currentIndredient: randomIngredient
-      });
-    }
+    this.setState({
+      currentIndredient: randomIngredient
+    });
   }
 
   handleExitButton() {
