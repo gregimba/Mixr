@@ -4,7 +4,6 @@ const { sequelize, Sequelize } = require('../server/database/models');
 // and Returns new matches
 const matchUserWithDrinks = async (user = 1) => {
   const db = sequelize.models;
-  console.log('MODELS: ', sequelize.models);
 
   const likedIngredientsData = await db.user_ingredient.findAll({
     where: {
