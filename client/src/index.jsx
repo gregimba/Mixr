@@ -106,6 +106,7 @@ class App extends Component {
   render(props) {
     return (
       <div className="App">
+        <a href="/logout">Log Out</a>
         <div className="sidebar">
           {this.state.MatchedDrinks.map(drink => {
             return (
