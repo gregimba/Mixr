@@ -1,7 +1,8 @@
 const { sequelize, Sequelize } = require('../server/database/models');
 
-// Returns array of matched Drink Ids
-const findDrinks = async (user = 1) => {
+// Matches given user with drinks based on liked ingredients
+// and Returns new matches
+const matchUserWithDrinks = async (user = 1) => {
   const db = sequelize.models;
   console.log('MODELS: ', sequelize.models);
 
@@ -48,7 +49,7 @@ const findDrinks = async (user = 1) => {
       ],
     }));
   });
-  drinksWithUser = await Promise.all(drinksWithUser);
+  drinksWithUser = Promise.all(drinksWithUser);
 
   const invalidDrinks = [];
   drinksWithUser.forEach((drink) => {
@@ -81,7 +82,27 @@ const findDrinks = async (user = 1) => {
       if (created) { newMatches.push(item); }
     }));
   });
-  await Promise.all(matches);
-  console.log(newMatches);
+  Promise.all(matches);
+
+  const newDrinkData = [];
+  const newDrinks = [];
+  newMatches.forEach((match) => {
+    newDrinkData.push(db.Drink.find({
+      where: {
+        id: match.dataValues.drinkId,
+      },
+    }).then((drink) => {
+      const formattedDrink = {
+        drinkId: drink.dataValues.id,
+        drinkName: drink.dataValues.name,
+        drinkImage: drink.dataValues.image,
+      };
+      newDrinks.push(formattedDrink);
+    }));
+  });
+  Promise.all(newDrinkData);
+
+  return newDrinks;
 };
-findDrinks();
+
+export default matchUserWithDrinks;
