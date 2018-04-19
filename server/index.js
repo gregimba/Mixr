@@ -1,11 +1,12 @@
 const express = require("express");
 const path = require("path");
 const pg = require("pg");
-const models = require("./database/models");
+// const models = require("./database/models");
 const bodyParser = require('body-parser');
-const Sequelize = require('sequelize');
-// const { sequelize, Sequelize } = require('../server/database/models');
-// const db = sequelize.models;
+const { sequelize, Sequelize } = require('../server/database/models');
+const db = sequelize.models;
+const Op = Sequelize.Op
+// const Sequelize = require('sequelize');
 
 const app = express();
 
@@ -25,7 +26,7 @@ app.post("/user/:userId/ingredients/:ingredientId", (req, res) => {
   // console.log("models:", models.sequelize.models)
 
   // Add ingredient to user in interjoin table
-  models.sequelize.models.user_ingredient.findOrCreate({
+  db.user_ingredient.findOrCreate({
       where: {
         userId: userID,
         ingredientId: ingredientID,
@@ -44,14 +45,14 @@ app.post("/user/:userId/ingredients/:ingredientId", (req, res) => {
 app.get("/drink/:drinkId", (req, res) => {
   let drinkID = req.params.drinkId;
 
-  models.Drink.find({
+  db.Drink.find({
     where: { id: drinkID}
   })
   .then(drinkInfo => {
-    models.DrinkIngredient.findAll({
+    db.DrinkIngredient.findAll({
       where: { drinkId: drinkID },
       include: [{
-        model: models.Ingredient
+        model: db.Ingredient
       }]
     })
     .then( singleDrinkIngredients => {
@@ -90,10 +91,10 @@ app.get("/drink/:drinkId", (req, res) => {
 // Array of drink matches for a user
 app.get("/user/:userId/drinks", (req, res) => {
   let userID = req.params.userId;
-  models.User.findAll({
+  db.User.findAll({
     where: { id: userID },
     include: [{
-        model: models.Drink,
+        model: db.Drink,
         attributes: ['id', 'name', 'image'],
       }]
   })
@@ -121,10 +122,10 @@ app.get("/user/:userId/drinks", (req, res) => {
 app.get("/user/:userId/ingredients", (req, res) => {
   let userID = req.params.userId;
 
-  models.User.findAll({
+  db.User.findAll({
     where: { id: userID },
     include: [{
-        model: models.Ingredient,
+        model: db.Ingredient,
         attributes: ['id', 'name'], // 'image'
       }]
   })
@@ -148,40 +149,79 @@ app.get("/user/:userId/ingredients", (req, res) => {
   });
 });
 
-// Returns a Single "non-liked" ingredient (reverse of "liked" ingredients list)
+// Returns a Single "non-liked" ingredient
+// (reverse of "liked" ingredients list and then send back a single random 'non-liked' ingredient)
 app.get("/user/:userId/randomIngredient", (req, res) => {
   let userID = req.params.userId;
-  const Op = Sequelize.Op
 
-  models.User.findAll({
-    where: {
-      [Op.not]: [{ id: userID }]
-    },
-    include: [{
-        model: models.Ingredient,
+  db.Ingredient.findAll({
+    attributes: ['id', 'name'],
+  })
+  .then( ingredients => {
+    db.User.findAll({
+      where: { id: userID },
+      include: [{
+        model: db.Ingredient,
         attributes: ['id', 'name'],  // 'image'
       }]
-  })
-  .then( user => {
-    let likedIngredientList = [];
-    user[0].Ingredients.forEach( ingredient => {
-      let userIngredient = Object.assign(
-        {},
-        {
-          ingredientId: ingredient.dataValues.id,
-          ingredientName: ingredient.dataValues.name,
-    //       drinkImage: drink.dataValues.image
-        }
-      )
-      likedIngredientList.push(userIngredient);
     })
-    res.send(likedIngredientList)
+    .then( user => {
+
+      // Creates a list of all the ingrdients in the database
+      let listOfAllIngredients = [];
+      ingredients.forEach( ingredient => {
+        let allIngredients = Object.assign(
+          {},
+          {
+            ingredientId: ingredient.dataValues.id,
+            ingredientName: ingredient.dataValues.name,
+            // drinkImage: drink.dataValues.image
+          }
+        )
+        listOfAllIngredients.push(allIngredients);
+      })
+      listOfAllIngredients.pop();
+
+      // Creates a list of all the 'liked' ingredients for a user
+      let likedIngredientList = [];
+      user[0].Ingredients.forEach( ingredient => {
+        let userIngredient = Object.assign(
+          {},
+          {
+            ingredientId: ingredient.dataValues.id,
+            ingredientName: ingredient.dataValues.name,
+            // drinkImage: drink.dataValues.image
+          }
+        )
+        likedIngredientList.push(userIngredient);
+      })
+
+      console.log('INGR', listOfAllIngredients)
+      console.log('LikedIngr', likedIngredientList)
+
+      // Creates a list of 'non-liked' ingredients
+      // let notLikedIngredientList = [];
+      //
+      // likedIngredientList.forEach( likedIngredient => {
+      //
+      //   if( allIngredient.ingredientName !== likedIngredient.ingredientName ){
+      //     notLikedIngredientList.push()
+      //   }
+      //
+      // })
+
+      // Selects a random index in the 'non-liked' list and
+      // sends back an object with the ingredient's name, id and image??
+
+      // res.send(likedIngredientList)
+    })
+
   })
   .catch( err => {
     console.log("!!!Error:", err)
   })
 });
 
-// models.sequelize.sync().then(() => {
+// db.sequelize.sync().then(() => {
   app.listen(3000, () => console.log("Example app listening on port 3000!"));
 // });
