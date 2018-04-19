@@ -4,14 +4,41 @@ const pg = require("pg");
 const models = require("./database/models");
 const bodyParser = require('body-parser');
 const Sequelize = require('sequelize');
-
-// console.log(models.sequelize)
+// const { sequelize, Sequelize } = require('../server/database/models');
+// const db = sequelize.models;
 
 const app = express();
 
 app.use("/", express.static(path.join(__dirname, "../client/dist")));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+
+// Adding user "liked" ingrindents to the DB
+app.post("/user/:userId/ingredients/:ingredientId", (req, res) => {
+
+  // console.log("REQ", req.params)
+
+  let userID = req.params.userId;
+  let ingredientID = req.params.ingredientId;
+  // console.log("UserID", userID)
+  // console.log("ingredientID", ingredientID)
+  // console.log("models:", models.sequelize.models)
+
+  // Add ingredient to user in interjoin table
+  models.sequelize.models.user_ingredient.findOrCreate({
+      where: {
+        userId: userID,
+        ingredientId: ingredientID,
+      },
+    })
+  .then((data) => {
+    console.log("****You Created A User!!!")
+    // res.send.bind(res)
+    res.send(data)
+    // res.sendStatus(201);
+  })
+  .catch("Error Posting to DB")
+});
 
 // Will be quering a drinkId and send back the object of a single drink.
 app.get("/drink/:drinkId", (req, res) => {
@@ -90,18 +117,6 @@ app.get("/user/:userId/drinks", (req, res) => {
   })
 });
 
-// Adding user "liked" ingrindents to the DB
-app.post("/user/:userId/ingredients/:ingredientId", (req, res) => {
-
-  let userIdToStore = req.params.userId;
-  let username = req.body.username;
-  let ingredientIdToStore = req.params.ingredientId;
-  let ingredient = req.body.ingredient;
-
-  // Add ingredient to user in interjoin table
-  res.sendStatus(200);
-});
-
 // Array of ingredients matches for user, returns array of all 'liked' ingredients
 app.get("/user/:userId/ingredients", (req, res) => {
   let userID = req.params.userId;
@@ -134,7 +149,7 @@ app.get("/user/:userId/ingredients", (req, res) => {
 });
 
 // Returns a Single "non-liked" ingredient (reverse of "liked" ingredients list)
-app.get("/user/:userId/ingredient", (req, res) => {
+app.get("/user/:userId/randomIngredient", (req, res) => {
   let userID = req.params.userId;
   const Op = Sequelize.Op
 
