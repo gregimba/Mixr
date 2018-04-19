@@ -1,9 +1,6 @@
 const { sequelize, Sequelize } = require('../server/database/models');
 
-<<<<<<< HEAD
 //Returns array of matched Drink Ids
-=======
->>>>>>> 954027a57bbe7e9a675d9721fecbbea08ed83722
 const findDrinks = async (user = 1) => {
   const db = sequelize.models;
   console.log('MODELS: ', sequelize.models);
