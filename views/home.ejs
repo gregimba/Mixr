@@ -1,5 +1,85 @@
 <!DOCTYPE html>
 <html>
+<style>
+  body {
+    background: url(http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/dark_wall.png);
+    text-align: center;
+  }
+
+  mixin disable {
+    outline: none;
+    border: none;
+  }
+
+  mixin easeme {
+    -webkit-transition: 1s ease;
+    -moz-transition: 1s ease;
+    -o-transition: 1s ease;
+    -ms-transition: 1s ease;
+    transition: 1s ease;
+  }
+
+  p {
+    font: 13px Open Sans;
+    color: #6e6e6e;
+    text-shadow: #000 0px 1px 5px;
+    margin-bottom: 30px;
+    font-size: 20px;
+  }
+
+  .wrapper {
+    width: 420px;
+    margin: auto;
+  }
+
+  h1 {
+    padding: 30px 0px 0px 0px;
+    font: 25px Oswald;
+    color: #fff;
+    text-transform: uppercase;
+    text-shadow: #000 0px 1px 5px;
+    margin: 0px;
+    font-size: 50px;
+  }
+
+  .form {
+    width: full;
+  }
+
+  .button {
+    width: 100%;
+    padding: 15px;
+    border-radius: 5px;
+    background-image: -webkit-linear-gradient(#28d2de 0%, #1a878f 100%);
+    background-image: -moz-linear-gradient(#28d2de 0%, #1a878f 100%);
+    background-image: -o-linear-gradient(#28d2de 0%, #1a878f 100%);
+    background-image: linear-gradient(#28d2de 0%, #1a878f 100%);
+    font: 14px Oswald;
+    color: #fff;
+    text-transform: uppercase;
+    text-shadow: #000 0px 1px 5px;
+    border: 1px solid #000;
+    opacity: 0.7;
+    -webkit-box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.7);
+    -moz-box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.8) !important;
+    text-decoration: none;
+  }
+
+  .button:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+
+  .button:active {
+    border: none;
+    position: relative;
+    top: 3px;
+    box-shadow: 0px 0px #2c3e50;
+    background: #2c3e50;
+  }
+</style>
 
 <head>
   <title>Login</title>
@@ -7,8 +87,9 @@
 
 <body>
   <h1>MIXR</h1>
-  <a href="/login">Click to log in</a>
-  <a href="/register">Click to sign up</a>
+  <p>Drink! Drank! Drunk!</p>
+  <a class="button" href="/login">Click to log in</a>
+  <a class="button" href="/register">Click to sign up</a>
 </body>
 
 </html>
