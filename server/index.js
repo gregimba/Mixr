@@ -1,12 +1,10 @@
 const express = require("express");
 const path = require("path");
 const pg = require("pg");
-// const models = require("./database/models");
 const bodyParser = require('body-parser');
 const { sequelize, Sequelize } = require('../server/database/models');
 const db = sequelize.models;
 const Op = Sequelize.Op
-// const Sequelize = require('sequelize');
 
 const app = express();
 
@@ -17,13 +15,8 @@ app.use(bodyParser.json());
 // Adding user "liked" ingrindents to the DB
 app.post("/user/:userId/ingredients/:ingredientId", (req, res) => {
 
-  // console.log("REQ", req.params)
-
   let userID = req.params.userId;
   let ingredientID = req.params.ingredientId;
-  // console.log("UserID", userID)
-  // console.log("ingredientID", ingredientID)
-  // console.log("models:", models.sequelize.models)
 
   // Add ingredient to user in interjoin table
   db.user_ingredient.findOrCreate({
@@ -34,9 +27,8 @@ app.post("/user/:userId/ingredients/:ingredientId", (req, res) => {
     })
   .then((data) => {
     console.log("****You Created A User!!!")
-    // res.send.bind(res)
+    // Joz's function
     res.send(data)
-    // res.sendStatus(201);
   })
   .catch("Error Posting to DB")
 });
@@ -111,7 +103,7 @@ app.get("/user/:userId/drinks", (req, res) => {
       )
       userDrinkList.push(userDrink);
     })
-    res.send(userDrinkList)
+    res.json(userDrinkList)
   })
   .catch( err => {
     console.log("!!!Error:", err)
@@ -137,12 +129,12 @@ app.get("/user/:userId/ingredients", (req, res) => {
         {
           ingredientId: ingredient.dataValues.id,
           ingredientName: ingredient.dataValues.name,
-    //       drinkImage: drink.dataValues.image
+    //       ingredientImage: ingredient.dataValues.image
         }
       )
       likedIngredientList.push(userIngredient);
     })
-    res.send(likedIngredientList)
+    res.json(likedIngredientList)
   })
   .catch( err => {
     console.log("!!!Error:", err)
@@ -155,14 +147,14 @@ app.get("/user/:userId/randomIngredient", (req, res) => {
   let userID = req.params.userId;
 
   db.Ingredient.findAll({
-    attributes: ['id', 'name'],
+    // attributes: ['id', 'name'],
   })
   .then( ingredients => {
     db.User.findAll({
       where: { id: userID },
       include: [{
         model: db.Ingredient,
-        attributes: ['id', 'name'],  // 'image'
+        // attributes: ['id', 'name'],  // 'image'
       }]
     })
     .then( user => {
@@ -175,7 +167,7 @@ app.get("/user/:userId/randomIngredient", (req, res) => {
           {
             ingredientId: ingredient.dataValues.id,
             ingredientName: ingredient.dataValues.name,
-            // drinkImage: drink.dataValues.image
+            // ingredientImage: ingredient.dataValues.image
           }
         )
         listOfAllIngredients.push(allIngredients);
@@ -190,14 +182,11 @@ app.get("/user/:userId/randomIngredient", (req, res) => {
           {
             ingredientId: ingredient.dataValues.id,
             ingredientName: ingredient.dataValues.name,
-            // drinkImage: drink.dataValues.image
+            // ingredientImage: ingredient.dataValues.image
           }
         )
         likedIngredientList.push(userIngredient);
       })
-
-      // console.log('INGR', listOfAllIngredients)
-      // console.log('LikedIngr', likedIngredientList)
 
       // Creates a list of 'non-liked' ingredients
       let notLikedIngredientList = [];
@@ -211,19 +200,17 @@ app.get("/user/:userId/randomIngredient", (req, res) => {
         }
       });
 
-      // console.log('NotLikedList', notLikedIngredientList)
-
       // Selects a random index in the 'non-liked' list and
       // sends back an object with the ingredient's name, id and image??
       let randomIngredient;
-      console.log("LENGTH", notLikedIngredientList.length)
+      // console.log("LENGTH", notLikedIngredientList.length)
       if (notLikedIngredientList.length > 0){
         randomIngredient = notLikedIngredientList[Math.floor(Math.random()*notLikedIngredientList.length)];
       } else {
-        randomIngredient = `We have no more ingredients for you to like! \nYou have all our recipes, time to mix some delicious drinks!`;
+        randomIngredient = null;
       }
 
-      res.send(randomIngredient)
+      res.json(randomIngredient)
     })
 
   })
