@@ -3,7 +3,9 @@ module.exports = (sequelize, DataTypes) => {
     name: {
       type: DataTypes.STRING,
       unique: true
-    }
+    },
+    description: DataTypes.TEXT,
+    strID: DataTypes.STRING
   });
   Ingredient.associate = models => {
     Ingredient.belongsToMany(models.User, {
