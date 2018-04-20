@@ -16,24 +16,27 @@ class App extends Component {
       likedIngredients: [],
       currentIndredient: {},
       MatchedDrinks: [],
-      currentDrink: {},
-    }
-
+      currentDrink: {}
+    };
   }
 
   componentDidMount() {
-    axios.get('url goes here...').then(res => {
-      this.setState({
-        ingredients: res.data, //??
-        currentIndredient: this.getRandomIngredient(this.state.ingredients),
+    axios
+      .get('url goes here...')
+      .then(res => {
+        this.setState({
+          ingredients: res.data, //??
+          currentIndredient: this.getRandomIngredient(this.state.ingredients)
+        });
+      })
+      .catch(err => {
+        console.log(err);
       });
-    }). catch(err => {
-      console.log(err);
-    })
   }
 
   getRandomIngredient(ingredientList) {
-    var ingredient = ingredientList[Math.floor(Math.random() * ingredientList.length)];
+    var ingredient =
+      ingredientList[Math.floor(Math.random() * ingredientList.length)];
     return ingredient;
   }
 
@@ -47,7 +50,7 @@ class App extends Component {
       randomIngredient = this.getRandomIngredient(ingredients);
       this.setState({
         currentIndredient: randomIngredient
-      })
+      });
     }
   }
 
@@ -60,7 +63,7 @@ class App extends Component {
       randomIngredient = this.getRandomIngredient(ingredients);
       this.setState({
         currentIndredient: randomIngredient
-      })
+      });
     }
   }
 
@@ -68,7 +71,7 @@ class App extends Component {
     this.setState({
       view: 'ingredient',
       currentIndredient: this.getRandomIngredient(ingredients)
-    })
+    });
   }
 
   changeView(option, target) {
@@ -80,35 +83,41 @@ class App extends Component {
   }
 
   renderView() {
-    const {view} = this.state;
+    const { view } = this.state;
     if (view === 'ingredient') {
-      return
-        <div className="ingredient-page">
-          <img src={'images url goes here....'}/>
-          <Ingredient ingredient={this.state.currentIndredient.name}
-                      like={this.handleLikeButton.bind(this)}
-                      dislike={this.handleDislikeButton.bind(this)}/>
-        </div>
+      return;
+      <div className="ingredient-page">
+        <img src={'images url goes here....'} />
+        <Ingredient
+          ingredient={this.state.currentIndredient.name}
+          like={this.handleLikeButton.bind(this)}
+          dislike={this.handleDislikeButton.bind(this)}
+        />
+      </div>;
     } else {
-        return
-          <div className="drink-page">
-          <Drink drink={this.state.currentDrink}
-                 exit={this.handleExitButton.bind(this)}
-                 handleClick={() => this.handleExitButton()}/>
-          </div>
-      }
+      return;
+      <div className="drink-page">
+        <Drink
+          drink={this.state.currentDrink}
+          exit={this.handleExitButton.bind(this)}
+          handleClick={() => this.handleExitButton()}
+        />
+      </div>;
+    }
   }
 
   render(props) {
     return (
       <div className="App">
         <div className="sidebar">
-          <Sidebar drinks={this.state.MatchedDrinks}
-                   handleClick={this.changeView.bind(this)}/>
+          <Sidebar
+            drinks={this.state.MatchedDrinks}
+            handleClick={this.changeView.bind(this)}
+          />
         </div>
         <div className="main">{this.renderView()}</div>
       </div>
-    )
+    );
   }
 }
 
