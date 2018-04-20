@@ -7,11 +7,10 @@ const { sequelize, Sequelize } = require('../server/database/models');
 const db = sequelize.models;
 const Op = Sequelize.Op;
 // const Sequelize = require('sequelize');
+const matchUserWithDrinks = require('../helper/matchUserWithDrinks');
 
 const app = express();
-const Sequelize = require('sequelize');
 const passport = require('passport');
-const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passportLocalSequelize = require('passport-local-sequelize');
@@ -38,10 +37,11 @@ app.post('/user/:userId/ingredients/:ingredientId', (req, res) => {
         ingredientId: ingredientID
       }
     })
-    .then(data => {
+    .then(async () => {
       console.log('****You Created A User!!!');
       // res.send.bind(res)
-      res.send(data);
+      const newMatches = await matchUserWithDrinks(userID);
+      res.json(newMatches);
       // res.sendStatus(201);
     })
     .catch('Error Posting to DB');

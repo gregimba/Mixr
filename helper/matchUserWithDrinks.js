@@ -100,4 +100,4 @@ const matchUserWithDrinks = async userId =>
     res(newDrinks);
   });
 
-export default matchUserWithDrinks;
+module.exports = matchUserWithDrinks;
