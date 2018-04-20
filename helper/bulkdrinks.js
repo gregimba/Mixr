@@ -16,4 +16,4 @@ for (let drink of json) {
   });
 }
 
-console.log(drinks);
+db.Drinks.bulkCreate(drinks);
