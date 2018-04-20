@@ -10,7 +10,7 @@ json = JSON.parse(json).result;
 for (let drink of json) {
   drinks.push({
     name: drink.name,
-    description: drink.descriptionPlain,
+    instruction: drink.descriptionPlain,
     glass: drink.servedIn.text,
     strId: drink.id
   });
