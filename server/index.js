@@ -66,6 +66,7 @@ app.post('/register', function(req, res) {
     function(err, user) {
       if (err) {
         console.log(err);
+        alert('');
         return res.render('/register');
       }
       passport.authenticate('local')(req, res, function() {
