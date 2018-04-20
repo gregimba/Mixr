@@ -1,8 +1,9 @@
 const Sequelize = require('sequelize');
-const user = require('./user');
-const ingredient = require('./ingredient');
-const drink = require('./drink');
-const drink_ingredient = require('./drink_ingredient');
+const user = require('./models/user');
+const ingredient = require('./models/ingredient');
+const drink = require('./models/drink');
+const drink_ingredient = require('./models/drinkingredient');
+const passportLocalSequelize = require('passport-local-sequelize');
 require('dotenv').config();
 
 const sequelize = new Sequelize(
@@ -37,6 +38,20 @@ sequelize
     console.error('Unable to connect to the database:', err);
   });
 
-models.sequelize = sequelize;
+let User = sequelize.define('user', {
+  username: Sequelize.STRING,
+  myhash: Sequelize.TEXT,
+  mysalt: Sequelize.STRING
+});
 
+passportLocalSequelize.attachToUser(User, {
+  usernameField: 'username',
+  hashField: 'myhash',
+  saltField: 'mysalt'
+});
+
+sequelize.sync();
+
+models.sequelize = sequelize;
 module.exports = models;
+module.exports = User;
