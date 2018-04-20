@@ -11,9 +11,9 @@ for (let drink of json) {
   drinks.push({
     name: drink.name,
     description: drink.descriptionPlain,
-    glass: drink.servedIn,
+    glass: drink.servedIn.text,
     strId: drink.id
   });
 }
 
-db.Drinks.bulkCreate(drinks);
+db.Drink.bulkCreate(drinks);
