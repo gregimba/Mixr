@@ -113,7 +113,7 @@ app.get('/user/:userId/drinks', (req, res) => {
         );
         userDrinkList.push(userDrink);
       });
-      res.send(userDrinkList);
+      res.json(userDrinkList);
     })
     .catch(err => {
       console.log('!!!Error:', err);
