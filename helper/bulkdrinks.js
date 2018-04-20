@@ -8,5 +8,12 @@ let json = fs.readFileSync('./drinks.json', 'utf8');
 json = JSON.parse(json).result;
 
 for (let drink of json) {
-  console.log(drink.name);
+  drinks.push({
+    name: drink.name,
+    description: drink.descriptionPlain,
+    glass: drink.servedIn,
+    strId: drink.id
+  });
 }
+
+console.log(drinks);
