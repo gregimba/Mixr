@@ -196,24 +196,34 @@ app.get("/user/:userId/randomIngredient", (req, res) => {
         likedIngredientList.push(userIngredient);
       })
 
-      console.log('INGR', listOfAllIngredients)
-      console.log('LikedIngr', likedIngredientList)
+      // console.log('INGR', listOfAllIngredients)
+      // console.log('LikedIngr', likedIngredientList)
 
       // Creates a list of 'non-liked' ingredients
-      // let notLikedIngredientList = [];
-      //
-      // likedIngredientList.forEach( likedIngredient => {
-      //
-      //   if( allIngredient.ingredientName !== likedIngredient.ingredientName ){
-      //     notLikedIngredientList.push()
-      //   }
-      //
-      // })
+      let notLikedIngredientList = [];
+
+      listOfAllIngredients.forEach( allIngredient => {
+
+        let notLikedCheck = likedIngredientList.filter(ingredient => (ingredient.ingredientName === allIngredient.ingredientName ));
+
+        if( notLikedCheck.length === 0 ){
+          notLikedIngredientList.push(allIngredient)
+        }
+      });
+
+      // console.log('NotLikedList', notLikedIngredientList)
 
       // Selects a random index in the 'non-liked' list and
       // sends back an object with the ingredient's name, id and image??
+      let randomIngredient;
+      console.log("LENGTH", notLikedIngredientList.length)
+      if (notLikedIngredientList.length > 0){
+        randomIngredient = notLikedIngredientList[Math.floor(Math.random()*notLikedIngredientList.length)];
+      } else {
+        randomIngredient = `We have no more ingredients for you to like! \nYou have all our recipes, time to mix some delicious drinks!`;
+      }
 
-      // res.send(likedIngredientList)
+      res.send(randomIngredient)
     })
 
   })
