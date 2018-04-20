@@ -92,12 +92,7 @@ const matchUserWithDrinks = async userId =>
           id: match.dataValues.drinkId,
         },
       }).then((drink) => {
-        const formattedDrink = {
-          drinkId: drink.dataValues.id,
-          drinkName: drink.dataValues.name,
-          drinkImage: drink.dataValues.image,
-        };
-        newDrinks.push(formattedDrink);
+        newDrinks.push(drink.dataValues);
       }));
     });
     await Promise.all(newDrinkData);
