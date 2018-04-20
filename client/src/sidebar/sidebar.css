@@ -1,7 +1,33 @@
-.drink-list {
-  float: right;
-  height: auto; 
+.sidebar {
+  padding: 10px 10px 38px 34px;
+  height: auto;
   margin: auto;
+  margin-top: 30px;
+  margin-left: 10px;
+  width: 30%;
+  font-family: 'Lato', sans-serif;
+  font-size: 1.4em;
+  color: #222;
+  background-color: #eed;
+  border-radius: 10px;
+  box-shadow: 43x 3px 2px #333;
+  opacity: 1;
+  float: left;
   border: 2px solid black;
   text-align: center;
+  float: right;
+}
+
+.drink-list {
+  cursor: pointer;
+  word-wrap: break-word;
+  margin-top: 5px;
+  font-size: 1.3em;
+  padding-left: 10px;
+  border-radius: 10px;
+  font-family: 'Droid Sans', sans-serif;
+  background-color: rgba(34, 49, 63, 0.8);
+  color: #fff;
+  transition: 0.2s ease-out;
+  margin-right: 20px;
 }

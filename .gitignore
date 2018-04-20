@@ -1,6 +1,15 @@
-node_modules
-client/dist/bundle.js
-.env
-config.json
-data
+
+## Mac OSX ##
 .DS_Store
+
+## NPM ##
+node_modules
+
+## Compiled files ##
+client/dist/bundle.js
+
+
+## Config File ##
+.env
+server/database/config/config.json
+data
