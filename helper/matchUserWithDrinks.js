@@ -1,6 +1,7 @@
 const { sequelize } = require('../server/database/models');
 
-// Matches given user with drinks based on liked ingredients
+// Matches given userId with drinks
+// based on that users liked ingredients in DB
 // and Returns new matches
 const matchUserWithDrinks = async userId =>
   new Promise(async (res) => {
