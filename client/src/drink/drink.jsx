@@ -4,7 +4,7 @@ import './Drink.css';
 const Drink = props => (
   <div className="drink-page">
     <div className="drink-image">
-      <img className="drink-object" src={'drink image url goes here...'} />
+      {/* <img className="drink-object" src={'drink image url goes here...'} /> */}
     </div>
     <div className="drink-title">{props.drink.name}</div>
     <div className="drink-instruction">{props.drink.instruction}</div>
