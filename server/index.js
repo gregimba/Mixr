@@ -117,22 +117,21 @@ app.post('/user/:userId/ingredients/:ingredientId', (req, res) => {
     })
     .then(async () => {
       console.log('****You Created A User!!!');
-      // res.send.bind(res)
       const newMatches = await matchUserWithDrinks(userID);
       res.json(newMatches);
-      // res.sendStatus(201);
     })
     .catch('Error Posting to DB');
 });
 
-// Will be quering a drinkId and send back the object of a single drink.
+// Will be quering a drinkId and send back the object of
+// all the information about a single drink.
 app.get('/drink/:drinkId', (req, res) => {
   let drinkID = req.params.drinkId;
 
   db.Drink.find({
     where: { id: drinkID }
   })
-    .then(drinkInfo => {
+    .then(singleDrink => {
       db.DrinkIngredient.findAll({
         where: { drinkId: drinkID },
         include: [
@@ -144,24 +143,15 @@ app.get('/drink/:drinkId', (req, res) => {
         .then(singleDrinkIngredients => {
           let drinkIngredients = {};
 
-          singleDrinkIngredients.forEach(ingredient => {
-            let ingredientName = ingredient.Ingredient.dataValues.name;
-            let ingredientMeasure = ingredient.dataValues.measure;
+          singleDrinkIngredients.forEach(drinkIngredient => {
+            let ingredientName = drinkIngredient.Ingredient.dataValues.name;
+            let ingredientMeasure = drinkIngredient.dataValues.measure;
 
             drinkIngredients[ingredientName] = ingredientMeasure;
           });
+          singleDrink.dataValues.ingredients = drinkIngredients;
 
-          let singleDrink = Object.assign(
-            {},
-            {
-              drinkId: drinkInfo.id,
-              drinkName: drinkInfo.name,
-              drinkInstructions: drinkInfo.instructions,
-              drinkGlass: drinkInfo.glass,
-              drinkImage: drinkInfo.image,
-              DrinkIngredients: drinkIngredients
-            }
-          );
+          singleDrink = singleDrink.dataValues;
           res.json(singleDrink);
         })
         .catch(err => {
@@ -181,24 +171,15 @@ app.get('/user/:userId/drinks', (req, res) => {
     include: [
       {
         model: db.Drink,
-        attributes: ['id', 'name', 'image']
       }
     ]
   })
     .then(user => {
       let userDrinkList = [];
-      user[0].Drinks.forEach(drink => {
-        let userDrink = Object.assign(
-          {},
-          {
-            drinkId: drink.dataValues.id,
-            drinkName: drink.dataValues.name,
-            drinkImage: drink.dataValues.image
-          }
-        );
-        userDrinkList.push(userDrink);
+      user[0].Drinks.forEach(userDrink => {
+        userDrinkList.push(userDrink.dataValues);
       });
-      res.send(userDrinkList);
+      res.json(userDrinkList);
     })
     .catch(err => {
       console.log('!!!Error:', err);
@@ -214,27 +195,20 @@ app.get('/user/:userId/ingredients', (req, res) => {
     include: [
       {
         model: db.Ingredient,
-        attributes: ['id', 'name'] // 'image'
       }
     ]
   })
-    .then(user => {
-      let likedIngredientList = [];
-      user[0].Ingredients.forEach(ingredient => {
-        let userIngredient = Object.assign(
-          {},
-          {
-            ingredientId: ingredient.dataValues.id,
-            ingredientName: ingredient.dataValues.name
-          }
-        );
-        likedIngredientList.push(userIngredient);
-      });
-      res.send(likedIngredientList);
+  .then( user => {
+    let likedIngredientList = [];
+    user[0].Ingredients.forEach( userIngredient => {
+      userIngredient.dataValues.image = 'Some Image';
+      likedIngredientList.push(userIngredient.dataValues);
     })
-    .catch(err => {
-      console.log('!!!Error:', err);
-    });
+    res.json(likedIngredientList)
+  })
+  .catch( err => {
+    console.log("!!!Error:", err)
+  });
 });
 
 // Returns a Single "non-liked" ingredient
@@ -243,81 +217,57 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
   let userID = req.params.userId;
 
   db.Ingredient.findAll({
-    attributes: ['id', 'name']
   })
-    .then(ingredients => {
-      db.User.findAll({
-        where: { id: userID },
-        include: [
-          {
-            model: db.Ingredient,
-            attributes: ['id', 'name'] // 'image'
-          }
-        ]
+  .then( ingredients => {
+    db.User.findAll({
+      where: { id: userID },
+      include: [{
+        model: db.Ingredient,
+      }]
       }).then(user => {
         // Creates a list of all the ingrdients in the database
         let listOfAllIngredients = [];
-        ingredients.forEach(ingredient => {
-          let allIngredients = Object.assign(
-            {},
-            {
-              ingredientId: ingredient.dataValues.id,
-              ingredientName: ingredient.dataValues.name
-              // drinkImage: drink.dataValues.image
-            }
-          );
+        ingredients.forEach(allIngredients => {
           listOfAllIngredients.push(allIngredients);
         });
         listOfAllIngredients.pop();
 
         // Creates a list of all the 'liked' ingredients for a user
         let likedIngredientList = [];
-        user[0].Ingredients.forEach(ingredient => {
-          let userIngredient = Object.assign(
-            {},
-            {
-              ingredientId: ingredient.dataValues.id,
-              ingredientName: ingredient.dataValues.name
-            }
-          );
+        user[0].Ingredients.forEach(userIngredient => {
           likedIngredientList.push(userIngredient);
         });
 
         // Creates a list of 'non-liked' ingredients
         let notLikedIngredientList = [];
 
-        listOfAllIngredients.forEach(allIngredient => {
-          let notLikedCheck = likedIngredientList.filter(
-            ingredient =>
-              ingredient.ingredientName === allIngredient.ingredientName
-          );
+      listOfAllIngredients.forEach( allIngredient => {
 
-          if (notLikedCheck.length === 0) {
-            notLikedIngredientList.push(allIngredient);
-          }
-        });
+        let notLikedCheck = likedIngredientList.filter(ingredient => (ingredient.ingredientName === allIngredient.ingredientName ));
 
-        // Selects a random index in the 'non-liked' list and
-        // sends back an object with the ingredient's name, id and image??
-        let randomIngredient;
-        console.log('LENGTH', notLikedIngredientList.length);
-        if (notLikedIngredientList.length > 0) {
-          randomIngredient =
-            notLikedIngredientList[
-              Math.floor(Math.random() * notLikedIngredientList.length)
-            ];
-        } else {
-          randomIngredient = null;
+        if( notLikedCheck.length === 0 ){
+          notLikedIngredientList.push(allIngredient)
         }
-
-        res.send(randomIngredient);
       });
+
+      // Selects a random index in the 'non-liked' list and
+      // sends back an object with one random 'non-liked' ingredient
+      let randomIngredient;
+      if (notLikedIngredientList.length > 0){
+        randomIngredient = notLikedIngredientList[Math.floor(Math.random()*notLikedIngredientList.length)];
+        randomIngredient.dataValues.image = 'IMAGE';
+        randomIngredient = randomIngredient.dataValues;
+      } else {
+        randomIngredient = null;
+      }
+      res.json(randomIngredient)
     })
-    .catch(err => {
-      console.log('!!!Error:', err);
-    });
+  })
+  .catch(err => {
+    console.log('!!!Error:', err);
+  });
 });
 
-// db.sequelize.sync().then(() => {
-app.listen(3000, () => console.log('Example app listening on port 3000!'));
+// sequelize.sync().then(() => {
+  app.listen(3000, () => console.log('Example app listening on port 3000!'));
 // });
