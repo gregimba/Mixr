@@ -216,8 +216,7 @@ app.get('/user/:userId/ingredients', (req, res) => {
 app.get('/user/:userId/randomIngredient', (req, res) => {
   let userID = req.params.userId;
 
-  db.Ingredient.findAll({
-  })
+  db.Ingredient.findAll({})
   .then( ingredients => {
     db.User.findAll({
       where: { id: userID },
@@ -228,35 +227,31 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
         // Creates a list of all the ingrdients in the database
         let listOfAllIngredients = [];
         ingredients.forEach(allIngredients => {
-          listOfAllIngredients.push(allIngredients);
+          listOfAllIngredients.push(allIngredients.dataValues);
         });
-        listOfAllIngredients.pop();
 
         // Creates a list of all the 'liked' ingredients for a user
         let likedIngredientList = [];
         user[0].Ingredients.forEach(userIngredient => {
-          likedIngredientList.push(userIngredient);
+          likedIngredientList.push(userIngredient.dataValues);
         });
 
         // Creates a list of 'non-liked' ingredients
         let notLikedIngredientList = [];
 
-      listOfAllIngredients.forEach( allIngredient => {
+        listOfAllIngredients.forEach( allIngredient => {
+          let notLikedCheck = likedIngredientList.filter(ingredient => (ingredient.strID === allIngredient.strID ));
 
-        let notLikedCheck = likedIngredientList.filter(ingredient => (ingredient.ingredientName === allIngredient.ingredientName ));
-
-        if( notLikedCheck.length === 0 ){
-          notLikedIngredientList.push(allIngredient)
-        }
+          if( notLikedCheck.length === 0 ){
+            notLikedIngredientList.push(allIngredient);
+          }
       });
-
       // Selects a random index in the 'non-liked' list and
       // sends back an object with one random 'non-liked' ingredient
       let randomIngredient;
       if (notLikedIngredientList.length > 0){
         randomIngredient = notLikedIngredientList[Math.floor(Math.random()*notLikedIngredientList.length)];
-        randomIngredient.dataValues.image = 'IMAGE';
-        randomIngredient = randomIngredient.dataValues;
+        randomIngredient.image = 'IMAGE';
       } else {
         randomIngredient = null;
       }
