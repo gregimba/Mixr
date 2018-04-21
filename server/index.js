@@ -149,9 +149,9 @@ app.get('/drink/:drinkId', (req, res) => {
 
             drinkIngredients[ingredientName] = ingredientMeasure;
           });
-
           singleDrink.dataValues.ingredients = drinkIngredients;
-          
+
+          singleDrink = singleDrink.dataValues;
           res.json(singleDrink);
         })
         .catch(err => {
@@ -177,7 +177,7 @@ app.get('/user/:userId/drinks', (req, res) => {
     .then(user => {
       let userDrinkList = [];
       user[0].Drinks.forEach(userDrink => {
-        userDrinkList.push(userDrink);
+        userDrinkList.push(userDrink.dataValues);
       });
       res.json(userDrinkList);
     })
@@ -202,7 +202,7 @@ app.get('/user/:userId/ingredients', (req, res) => {
     let likedIngredientList = [];
     user[0].Ingredients.forEach( userIngredient => {
       userIngredient.dataValues.image = 'Some Image';
-      likedIngredientList.push(userIngredient);
+      likedIngredientList.push(userIngredient.dataValues);
     })
     res.json(likedIngredientList)
   })
@@ -256,10 +256,10 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
       if (notLikedIngredientList.length > 0){
         randomIngredient = notLikedIngredientList[Math.floor(Math.random()*notLikedIngredientList.length)];
         randomIngredient.dataValues.image = 'IMAGE';
+        randomIngredient = randomIngredient.dataValues;
       } else {
         randomIngredient = null;
       }
-
       res.json(randomIngredient)
     })
   })
