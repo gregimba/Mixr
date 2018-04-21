@@ -39,9 +39,9 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(User.createStrategy());
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.use(db.users.createStrategy());
+passport.serializeUser(db.users.serializeUser());
+passport.deserializeUser(db.users.deserializeUser());
 
 app.get('/', isLoggedIn, function(req, res) {
   res.render('');
@@ -65,13 +65,13 @@ app.get('/register', function(req, res) {
 
 app.post('/register', function(req, res) {
   console.log(req.body);
-  db.User.register(
-    new db.User({ username: req.body.username }),
+  db.users.register(
+    new db.users({ username: req.body.username }),
     req.body.password,
     function(err, user) {
       if (err) {
         console.log(err);
-        return res.render('/register');
+        return res.redirect('/register');
       }
       passport.authenticate('local')(req, res, function() {
         res.redirect('/accountCreated');
@@ -106,22 +106,24 @@ function isLoggedIn(req, res, next) {
 }
 
 app.get('/session', isLoggedIn, function(req, res) {
-  console.log(req.session.passport.user);
-  db.User.find({
-    where: {
-      username: req.session.passport.user
-    }
-    // include: [
-    //   {
-    //     model: db.Ingredient,
-    //     attributes: ['id']
-    //   }
-    // ]
-  }).then(function(a) {
-    console.log(a.dataValues.id);
-    let string = a.dataValues.id + '';
-    res.send(string);
-  });
+  console.log(req.session.passport.user, '=====');
+  db.users
+    .find({
+      where: {
+        username: req.session.passport.user
+      }
+      // include: [
+      //   {
+      //     model: db.Ingredient,
+      //     attributes: ['id']
+      //   }
+      // ]
+    })
+    .then(function(a) {
+      console.log(a, '=fjdlksfjdlksjflks');
+      let string = a;
+      res.send(string);
+    });
   // res.send(req.session);
 });
 
@@ -189,14 +191,16 @@ app.get('/drink/:drinkId', (req, res) => {
 // Array of drink matches for a user
 app.get('/user/:userId/drinks', (req, res) => {
   let userID = req.params.userId;
-  db.User.findAll({
-    where: { id: userID },
-    include: [
-      {
-        model: db.Drink,
-      }
-    ]
-  })
+  db.users
+    .findAll({
+      where: { id: userID },
+      include: [
+        {
+          model: db.Drink,
+          attributes: ['id', 'name', 'image']
+        }
+      ]
+    })
     .then(user => {
       let userDrinkList = [];
       user[0].Drinks.forEach(userDrink => {
@@ -212,15 +216,17 @@ app.get('/user/:userId/drinks', (req, res) => {
 // Array of ingredients matches for user, returns array of all 'liked' ingredients
 app.get('/user/:userId/ingredients', (req, res) => {
   let userID = req.params.userId;
-
-  db.User.findAll({
-    where: { id: userID },
-    include: [
-      {
-        model: db.Ingredient,
-      }
-    ]
-  })
+  console.log('fjdsao;fjdslak;fjdlsk;ajfldks;=== userID:', userID);
+  db.users
+    .findAll({
+      where: { id: userID },
+      include: [
+        {
+          model: db.Ingredient,
+          attributes: ['id', 'name'] // 'image'
+        }
+      ]
+    })
     .then(user => {
       let likedIngredientList = [];
       user[0].Ingredients.forEach(ingredient => {

@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     strID: DataTypes.STRING
   });
   Ingredient.associate = models => {
-    Ingredient.belongsToMany(models.User, {
+    Ingredient.belongsToMany(models.users, {
       through: 'user_ingredient',
       foreignKey: 'ingredientId'
     });

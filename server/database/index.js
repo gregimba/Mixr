@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const user = require('./models/user');
+// const user = require('./models/user');
 const ingredient = require('./models/ingredient');
 const drink = require('./models/drink');
 const drink_ingredient = require('./models/drinkingredient');

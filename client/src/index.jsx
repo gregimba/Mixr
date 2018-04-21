@@ -64,7 +64,7 @@ class App extends Component {
     axios.get(`http://localhost:3000/session`).then(res => {
       this.setState(
         {
-          userId: res
+          userId: res.data.id
         },
         this.getIngredient
       );

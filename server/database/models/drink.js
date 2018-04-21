@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.STRING
   });
   Drink.associate = models => {
-    Drink.belongsToMany(models.User, {
+    Drink.belongsToMany(models.users, {
       through: 'user_drink',
       foreignKey: 'drinkId'
     });
