@@ -12,7 +12,44 @@ class App extends Component {
 
     this.state = {
       view: 'ingredient',
-      ingredients: [],
+      ingredients: [
+        // {
+        //   description:
+        //     'Also called the Green Fairy – Absinthe is a highly alcoholic (up to 75%), anise flavored, type of spirit with an interesting history. The fluid is clear, until water is added: then it becomes milky and turbid.',
+        //   isCarbonated: false,
+        //   isAlcoholic: true,
+        //   isBaseSpirit: false,
+        //   isJuice: false,
+        //   type: 'spirits-other',
+        //   languageBranch: 'en',
+        //   id: 'absinthe',
+        //   name: 'Absinthe'
+        // },
+        // {
+        //   description:
+        //     'Do you want your drink a bit more intense? Try our super premium vodka Absolut 100.',
+        //   isCarbonated: false,
+        //   isAlcoholic: true,
+        //   isBaseSpirit: true,
+        //   isJuice: false,
+        //   type: 'vodka',
+        //   languageBranch: 'en',
+        //   id: 'absolut-100',
+        //   name: 'Absolut 100'
+        // },
+        // {
+        //   description:
+        //     'A vodka with a smooth taste, with a sophisticated character of peaches. Absolut Apeach is made from all natural ingredients.',
+        //   isCarbonated: false,
+        //   isAlcoholic: true,
+        //   isBaseSpirit: true,
+        //   isJuice: false,
+        //   type: 'vodka',
+        //   languageBranch: 'en',
+        //   id: 'absolut-apeach',
+        //   name: 'Absolut Apeach'
+        // }
+      ],
       likedIngredients: [],
       currentIndredient: {},
       MatchedDrinks: [],
@@ -25,12 +62,12 @@ class App extends Component {
       .get('url goes here...')
       .then(res => {
         this.setState({
-          ingredients: res.data, //??
+          ingredients: res.data,
           currentIndredient: this.getRandomIngredient(this.state.ingredients)
         });
       })
       .catch(err => {
-        console.log(err);
+        console.log('AXIOS: Got here--->', err);
       });
   }
 
@@ -89,7 +126,7 @@ class App extends Component {
       <div className="ingredient-page">
         <img src={'images url goes here....'} />
         <Ingredient
-          ingredient={this.state.currentIndredient.name}
+          ingredient={this.state.currentIndredient}
           like={this.handleLikeButton.bind(this)}
           dislike={this.handleDislikeButton.bind(this)}
         />

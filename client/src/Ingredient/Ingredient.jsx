@@ -8,7 +8,7 @@ const Ingredient = props => (
         className="ingredient-image"
         src={'ingredient images url goes here...'}
       />
-      <div className="ingredient-name">{props.ingredient}</div>
+      <div className="ingredient-name">{props.ingredient.name}</div>
     </div>
     <div className="buttonContainer">
       <button className="button" onClick={() => props.like()}>
