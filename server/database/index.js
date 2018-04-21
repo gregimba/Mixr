@@ -16,8 +16,20 @@ const sequelize = new Sequelize(
   }
 );
 
+let User = sequelize.define('user', {
+  username: Sequelize.STRING,
+  myhash: Sequelize.TEXT,
+  mysalt: Sequelize.STRING
+});
+
+passportLocalSequelize.attachToUser(User, {
+  usernameField: 'username',
+  hashField: 'myhash',
+  saltField: 'mysalt'
+});
+
 const models = {
-  User: user,
+  User: User,
   Drink: drink,
   Ingredient: ingredient,
   Drink_ingredient: drink_ingredient
@@ -37,18 +49,6 @@ sequelize
   .catch(err => {
     console.error('Unable to connect to the database:', err);
   });
-
-let User = sequelize.define('user', {
-  username: Sequelize.STRING,
-  myhash: Sequelize.TEXT,
-  mysalt: Sequelize.STRING
-});
-
-passportLocalSequelize.attachToUser(User, {
-  usernameField: 'username',
-  hashField: 'myhash',
-  saltField: 'mysalt'
-});
 
 sequelize.sync();
 

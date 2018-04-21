@@ -53,14 +53,30 @@ class App extends Component {
       likedIngredients: [],
       currentIndredient: {},
       MatchedDrinks: [],
-      currentDrink: {}
+      currentDrink: {},
+      userId: ''
     };
+
+    this.getIngredient = this.getIngredient.bind(this);
   }
 
-  componentDidMount() {
+  componentWillMount() {
+    axios.get(`http://localhost:3000/session`).then(res => {
+      this.setState(
+        {
+          userId: res
+        },
+        this.getIngredient
+      );
+    });
+  }
+
+  getIngredient() {
+    console.log('here', this.state.userId);
     axios
-      .get('url goes here...')
+      .get(`http://localhost:3000/user/${this.state.userId}/ingredients`)
       .then(res => {
+        console.log(res);
         this.setState({
           ingredients: res.data,
           currentIndredient: this.getRandomIngredient(this.state.ingredients)

@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const pg = require('pg');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const { sequelize, Sequelize } = require('../server/database/models');
 const db = sequelize.models;
@@ -12,6 +13,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passportLocalSequelize = require('passport-local-sequelize');
 
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/', express.static(path.join(__dirname, '../client/dist')));
@@ -40,7 +42,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.get('/', isLoggedIn, function(req, res) {
-  res.render('index');
+  res.render('');
 });
 
 app.get('/home', function(req, res) {
@@ -60,13 +62,13 @@ app.get('/register', function(req, res) {
 });
 
 app.post('/register', function(req, res) {
-  User.register(
-    new User({ username: req.body.username }),
+  console.log(req.body);
+  db.User.register(
+    new db.User({ username: req.body.username }),
     req.body.password,
     function(err, user) {
       if (err) {
         console.log(err);
-        alert('');
         return res.render('/register');
       }
       passport.authenticate('local')(req, res, function() {
@@ -100,6 +102,26 @@ function isLoggedIn(req, res, next) {
   }
   res.redirect('/login');
 }
+
+app.get('/session', isLoggedIn, function(req, res) {
+  console.log(req.session.passport.user);
+  db.User.find({
+    where: {
+      username: req.session.passport.user
+    }
+    // include: [
+    //   {
+    //     model: db.Ingredient,
+    //     attributes: ['id']
+    //   }
+    // ]
+  }).then(function(a) {
+    console.log(a.dataValues.id);
+    let string = a.dataValues.id + '';
+    res.send(string);
+  });
+  // res.send(req.session);
+});
 
 // Adding user "liked" ingrindents to the DB
 app.post('/user/:userId/ingredients/:ingredientId', (req, res) => {
@@ -228,6 +250,7 @@ app.get('/user/:userId/ingredients', (req, res) => {
         );
         likedIngredientList.push(userIngredient);
       });
+      console.log(likedIngredientList);
       res.send(likedIngredientList);
     })
     .catch(err => {
