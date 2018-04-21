@@ -6,7 +6,7 @@ require('dotenv').config();
 const db = {};
 
 const sequelize = new Sequelize(
-  'mixr',
+  process.env.DB_NAME,
   process.env.DB_USERNAME,
   process.env.DB_PASSWORD,
   {
@@ -38,6 +38,15 @@ Object.keys(db).forEach(modelName => {
     db[modelName].associate(db);
   }
 });
+
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
