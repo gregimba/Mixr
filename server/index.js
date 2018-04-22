@@ -294,8 +294,10 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
               notLikedIngredientList[
                 Math.floor(Math.random() * notLikedIngredientList.length)
               ];
+            try {
             randomIngredient.image = await searchImage(randomIngredient.name);
             randomIngredient.image = randomIngredient.image[0].url;
+            } catch(err) { console.error('ERROR RETRIEVING IMAGE: ', err); }
           } else {
             randomIngredient = null;
           }
