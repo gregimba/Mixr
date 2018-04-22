@@ -4,6 +4,7 @@ if (process.env.NODE_ENV != 'production') {
 const express = require('express');
 const path = require('path');
 const pg = require('pg');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const { sequelize, Sequelize } = require('../server/database/models');
 const db = sequelize.models;
@@ -17,11 +18,12 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passportLocalSequelize = require('passport-local-sequelize');
 
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/', express.static(path.join(__dirname, '../client/dist')));
 
-const User = require('./database');
+// const User = require('./database');
 
 app.set('view engine', 'ejs');
 
@@ -37,19 +39,19 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(User.createStrategy());
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.use(db.users.createStrategy());
+passport.serializeUser(db.users.serializeUser());
+passport.deserializeUser(db.users.deserializeUser());
 
 app.get('/', isLoggedIn, function(req, res) {
-  res.render('index');
+  res.render('');
 });
 
 app.get('/home', function(req, res) {
   res.render('home');
 });
 
-app.get('/secret', isLoggedIn, function(req, res) {
+app.get('/secret', function(req, res) {
   res.render('secret');
 });
 
@@ -62,14 +64,13 @@ app.get('/register', function(req, res) {
 });
 
 app.post('/register', function(req, res) {
-  User.register(
-    new User({ username: req.body.username }),
+  db.users.register(
+    new db.users({ username: req.body.username }),
     req.body.password,
     function(err, user) {
       if (err) {
         console.log(err);
-        alert('');
-        return res.render('/register');
+        return res.redirect('/register');
       }
       passport.authenticate('local')(req, res, function() {
         res.redirect('/accountCreated');
@@ -100,8 +101,25 @@ function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/login');
+  res.redirect('/home');
 }
+
+// Checking on session to retrieve userId
+app.get('/session', isLoggedIn, function(req, res) {
+  db.users
+    .find({
+      where: {
+        username: req.session.passport.user
+      }
+    })
+    .then(user => {
+      res.send(user);
+    })
+    .catch(err => {
+      console.error('!!Err: ', err);
+      res.sendStatus(404);
+    });
+});
 
 // Adding user "liked" ingrindents to the DB
 app.post('/user/:userId/ingredients/:ingredientId', (req, res) => {
@@ -129,18 +147,20 @@ app.post('/user/:userId/ingredients/:ingredientId', (req, res) => {
 app.get('/drink/:drinkId', (req, res) => {
   let drinkID = req.params.drinkId;
 
-  db.Drink.find({
-    where: { id: drinkID }
-  })
+  db.drink
+    .find({
+      where: { id: drinkID }
+    })
     .then(singleDrink => {
-      db.DrinkIngredient.findAll({
-        where: { drinkId: drinkID },
-        include: [
-          {
-            model: db.Ingredient
-          }
-        ]
-      })
+      db.drinkIngredient
+        .findAll({
+          where: { drinkId: drinkID },
+          include: [
+            {
+              model: db.ingredient
+            }
+          ]
+        })
         .then(singleDrinkIngredients => {
           let drinkIngredients = {};
 
@@ -167,14 +187,16 @@ app.get('/drink/:drinkId', (req, res) => {
 // Array of drink matches for a user
 app.get('/user/:userId/drinks', (req, res) => {
   let userID = req.params.userId;
-  db.User.findAll({
-    where: { id: userID },
-    include: [
-      {
-        model: db.Drink,
-      }
-    ]
-  })
+  db.users
+    .findAll({
+      where: { id: userID },
+      include: [
+        {
+          model: db.drink,
+          attributes: ['id', 'name', 'image']
+        }
+      ]
+    })
     .then(user => {
       let userDrinkList = [];
       user[0].Drinks.forEach(userDrink => {
@@ -190,26 +212,35 @@ app.get('/user/:userId/drinks', (req, res) => {
 // Array of ingredients matches for user, returns array of all 'liked' ingredients
 app.get('/user/:userId/ingredients', (req, res) => {
   let userID = req.params.userId;
-
-  db.User.findAll({
-    where: { id: userID },
-    include: [
-      {
-        model: db.Ingredient,
-      }
-    ]
-  })
-  .then( user => {
-    let likedIngredientList = [];
-    user[0].Ingredients.forEach( userIngredient => {
-      userIngredient.dataValues.image = 'Some Image';
-      likedIngredientList.push(userIngredient.dataValues);
+  db.users
+    .findAll({
+      where: { id: userID },
+      include: [
+        {
+          model: db.ingredient,
+          attributes: ['id', 'name'] // 'image'
+        }
+      ]
     })
-    res.json(likedIngredientList)
-  })
-  .catch( err => {
-    console.log("!!!Error:", err)
-  });
+    .then(user => {
+      let likedIngredientList = [];
+      user[0].ingredients.forEach(ingredient => {
+        let userIngredient = Object.assign(
+          {},
+          {
+            ingredientId: ingredient.dataValues.id,
+            ingredientName: ingredient.dataValues.name
+          }
+        );
+        likedIngredientList.push(userIngredient);
+      });
+      console.log(likedIngredientList);
+      res.send(likedIngredientList);
+    })
+
+    .catch(err => {
+      console.log('!!!Error:', err);
+    });
 });
 
 // Returns a Single "non-liked" ingredient
@@ -217,54 +248,65 @@ app.get('/user/:userId/ingredients', (req, res) => {
 app.get('/user/:userId/randomIngredient', (req, res) => {
   let userID = req.params.userId;
 
-  db.Ingredient.findAll({})
-  .then( ingredients => {
-    db.User.findAll({
-      where: { id: userID },
-      include: [{
-        model: db.Ingredient,
-      }]
-      }).then(async user => {
-        // Creates a list of all the ingrdients in the database
-        let listOfAllIngredients = [];
-        ingredients.forEach(allIngredients => {
-          listOfAllIngredients.push(allIngredients.dataValues);
-        });
+  db.ingredient
+    .findAll({})
+    .then(ingredients => {
+      db.users
+        .findAll({
+          where: { id: userID },
+          include: [
+            {
+              model: db.ingredient
+            }
+          ]
+        })
+        .then(async user => {
+          // Creates a list of all the ingrdients in the database
 
-        // Creates a list of all the 'liked' ingredients for a user
-        let likedIngredientList = [];
-        user[0].Ingredients.forEach(userIngredient => {
-          likedIngredientList.push(userIngredient.dataValues);
-        });
+          let listOfAllIngredients = [];
+          ingredients.forEach(allIngredients => {
+            listOfAllIngredients.push(allIngredients.dataValues);
+          });
 
-        // Creates a list of 'non-liked' ingredients
-        let notLikedIngredientList = [];
+          // Creates a list of all the 'liked' ingredients for a user
+          let likedIngredientList = [];
+          user[0].ingredients.forEach(userIngredient => {
+            likedIngredientList.push(userIngredient.dataValues);
+          });
 
-        listOfAllIngredients.forEach( allIngredient => {
-          let notLikedCheck = likedIngredientList.filter(ingredient => (ingredient.strID === allIngredient.strID ));
+          // Creates a list of 'non-liked' ingredients
+          let notLikedIngredientList = [];
 
-          if( notLikedCheck.length === 0 ){
-            notLikedIngredientList.push(allIngredient);
+          listOfAllIngredients.forEach(allIngredient => {
+            let notLikedCheck = likedIngredientList.filter(
+              ingredient => ingredient.strID === allIngredient.strID
+            );
+
+            if (notLikedCheck.length === 0) {
+              notLikedIngredientList.push(allIngredient);
+            }
+          });
+          // Selects a random index in the 'non-liked' list and
+          // sends back an object with one random 'non-liked' ingredient
+          let randomIngredient;
+          if (notLikedIngredientList.length > 0) {
+            randomIngredient =
+              notLikedIngredientList[
+                Math.floor(Math.random() * notLikedIngredientList.length)
+              ];
+            randomIngredient.image = await searchImage(randomIngredient.name);
+            randomIngredient.image = randomIngredient.image[0].url;
+          } else {
+            randomIngredient = null;
           }
-      });
-      // Selects a random index in the 'non-liked' list and
-      // sends back an object with one random 'non-liked' ingredient
-      let randomIngredient;
-      if (notLikedIngredientList.length > 0){
-        randomIngredient = notLikedIngredientList[Math.floor(Math.random()*notLikedIngredientList.length)];
-        randomIngredient.image = await searchImage(randomIngredient.name);
-        randomIngredient.image = randomIngredient.image[0].url;
-      } else {
-        randomIngredient = null;
-      }
-      res.json(randomIngredient)
+          res.send(randomIngredient);
+        });
     })
-  })
-  .catch(err => {
-    console.log('!!!Error:', err);
-  });
+    .catch(err => {
+      console.log('!!!Error:', err);
+    });
 });
 
 // sequelize.sync().then(() => {
-  app.listen(3000, () => console.log('Example app listening on port 3000!'));
+app.listen(3000, () => console.log('Example app listening on port 3000!'));
 // });
