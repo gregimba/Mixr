@@ -258,7 +258,7 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
             }
           ]
         })
-        .then(user => {
+        .then(async user => {
           // Creates a list of all the ingrdients in the database
 
           let listOfAllIngredients = [];
@@ -292,7 +292,8 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
               notLikedIngredientList[
                 Math.floor(Math.random() * notLikedIngredientList.length)
               ];
-            randomIngredient.image = 'IMAGE';
+            randomIngredient.image = await searchImage(randomIngredient.name);
+            randomIngredient.image = randomIngredient.image[0].url;
           } else {
             randomIngredient = null;
           }
