@@ -51,7 +51,7 @@ app.get('/home', function(req, res) {
   res.render('home');
 });
 
-app.get('/secret', isLoggedIn, function(req, res) {
+app.get('/secret', function(req, res) {
   res.render('secret');
 });
 
@@ -64,7 +64,6 @@ app.get('/register', function(req, res) {
 });
 
 app.post('/register', function(req, res) {
-  // console.log(req.body);
   db.users.register(
     new db.users({ username: req.body.username }),
     req.body.password,
@@ -102,7 +101,7 @@ function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/login');
+  res.redirect('/home');
 }
 
 // Checking on session to retrieve userId
