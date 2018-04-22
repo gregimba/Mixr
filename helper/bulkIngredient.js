@@ -1,17 +1,20 @@
 const fs = require('fs');
 const db = require('../server/database/models');
+const path = require('path');
 
 let ingredients = [];
 
-let json = fs.readFileSync('./ingredient.json', 'utf8');
+const pathName = path.join(__dirname, './ingredient.json');
+console.log(pathName);
+let json = fs.readFileSync(pathName, 'utf8');
 
 json = JSON.parse(json).result;
 
 for (let ingredient of json) {
   ingredients.push({
     name: ingredient.name,
-    strId: ingredient.id,
+    strID: ingredient.id,
     description: ingredient.description
   });
 }
-db.Ingredient.bulkCreate(ingredients);
+db.ingredient.bulkCreate(ingredients);

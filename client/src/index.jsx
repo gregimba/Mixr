@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 import Ingredient from './Ingredient/Ingredient';
 import Drink from './Drink/Drink';
-import DrinkListEntry from './DrinkListEntry/DrinkListEntry';
+// import DrinkListEntry from './DrinkListEntry/DrinkListEntry';
 import Sidebar from './Sidebar/Sidebar';
 
 class App extends Component {
@@ -12,46 +12,8 @@ class App extends Component {
 
     this.state = {
       view: 'ingredient',
-      ingredients: [
-        // {
-        //   description:
-        //     'Also called the Green Fairy – Absinthe is a highly alcoholic (up to 75%), anise flavored, type of spirit with an interesting history. The fluid is clear, until water is added: then it becomes milky and turbid.',
-        //   isCarbonated: false,
-        //   isAlcoholic: true,
-        //   isBaseSpirit: false,
-        //   isJuice: false,
-        //   type: 'spirits-other',
-        //   languageBranch: 'en',
-        //   id: 'absinthe',
-        //   name: 'Absinthe'
-        // },
-        // {
-        //   description:
-        //     'Do you want your drink a bit more intense? Try our super premium vodka Absolut 100.',
-        //   isCarbonated: false,
-        //   isAlcoholic: true,
-        //   isBaseSpirit: true,
-        //   isJuice: false,
-        //   type: 'vodka',
-        //   languageBranch: 'en',
-        //   id: 'absolut-100',
-        //   name: 'Absolut 100'
-        // },
-        // {
-        //   description:
-        //     'A vodka with a smooth taste, with a sophisticated character of peaches. Absolut Apeach is made from all natural ingredients.',
-        //   isCarbonated: false,
-        //   isAlcoholic: true,
-        //   isBaseSpirit: true,
-        //   isJuice: false,
-        //   type: 'vodka',
-        //   languageBranch: 'en',
-        //   id: 'absolut-apeach',
-        //   name: 'Absolut Apeach'
-        // }
-      ],
       likedIngredients: [],
-      currentIndredient: {},
+      currentIngredient: {},
       MatchedDrinks: [],
       currentDrink: {},
       userId: ''
@@ -60,11 +22,11 @@ class App extends Component {
     this.getIngredient = this.getIngredient.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     axios.get(`http://localhost:3000/session`).then(res => {
       this.setState(
         {
-          userId: res
+          userId: res.data.id
         },
         this.getIngredient
       );
@@ -72,59 +34,53 @@ class App extends Component {
   }
 
   getIngredient() {
-    console.log('here', this.state.userId);
     axios
-      .get(`http://localhost:3000/user/${this.state.userId}/ingredients`)
+      .get(`http://localhost:3000/user/${this.state.userId}/randomIngredient`)
       .then(res => {
         console.log(res);
         this.setState({
-          ingredients: res.data,
-          currentIndredient: this.getRandomIngredient(this.state.ingredients)
+          currentIngredient: res.data
         });
       })
       .catch(err => {
-        console.log('AXIOS: Got here--->', err);
+        console.log('Error: error retrieving ingredients', err);
       });
-  }
-
-  getRandomIngredient(ingredientList) {
-    var ingredient =
-      ingredientList[Math.floor(Math.random() * ingredientList.length)];
-    return ingredient;
   }
 
   handleLikeButton() {
     let likedIngredients = this.state.likedIngredients;
-    let currentIndredient = this.state.currentIndredient;
+    let currentIngredient = this.state.currentIngredient;
     let ingredients = this.state.ingredients;
-    likedIngredients.push(currentIndredient);
-    let randomIngredient = this.getRandomIngredient(ingredients);
+    likedIngredients.push(currentIngredient);
+    this.getIngredient();
     while (!likedIngredients.includes(randomIngredient)) {
       randomIngredient = this.getRandomIngredient(ingredients);
       this.setState({
-        currentIndredient: randomIngredient
+        currentIngredient: randomIngredient
       });
     }
   }
 
   handleDislikeButton() {
     let likedIngredients = this.state.likedIngredients;
-    let currentIndredient = this.state.currentIndredient;
+    let currentIngredient = this.state.currentIngredient;
     let ingredients = this.state.ingredients;
     let randomIngredient = this.getRandomIngredient(ingredients);
     while (!likedIngredients.includes(randomIngredient)) {
       randomIngredient = this.getRandomIngredient(ingredients);
       this.setState({
-        currentIndredient: randomIngredient
+        currentIngredient: randomIngredient
       });
     }
   }
 
   handleExitButton() {
-    this.setState({
-      view: 'ingredient',
-      currentIndredient: this.getRandomIngredient(ingredients)
-    });
+    this.setState(
+      {
+        view: 'ingredient'
+      },
+      this.getIngredient
+    );
   }
 
   changeView(option, target) {
@@ -135,31 +91,32 @@ class App extends Component {
     });
   }
 
-  renderView() {
-    const { view } = this.state;
-    if (view === 'ingredient') {
-      return;
-      <div className="ingredient-page">
-        <img src={'images url goes here....'} />
-        <Ingredient
-          ingredient={this.state.currentIndredient}
-          like={this.handleLikeButton.bind(this)}
-          dislike={this.handleDislikeButton.bind(this)}
-        />
-      </div>;
-    } else {
-      return;
-      <div className="drink-page">
-        <Drink
-          drink={this.state.currentDrink}
-          exit={this.handleExitButton.bind(this)}
-          handleClick={() => this.handleExitButton()}
-        />
-      </div>;
-    }
-  }
-
   render(props) {
+    const renderView = () => {
+      const { view, currentIngredient } = this.state;
+      if (view === 'ingredient') {
+        return (
+          <div className="ingredient-page">
+            <Ingredient
+              ingredient={currentIngredient}
+              like={this.handleLikeButton.bind(this)}
+              dislike={this.handleDislikeButton.bind(this)}
+            />
+          </div>
+        );
+      } else {
+        return (
+          <div className="drink-page">
+            <Drink
+              drink={this.state.currentDrink}
+              exit={this.handleExitButton.bind(this)}
+              handleClick={() => this.handleExitButton()}
+            />
+          </div>
+        );
+      }
+    };
+
     return (
       <div className="App">
         <div className="sidebar">
@@ -168,7 +125,8 @@ class App extends Component {
             handleClick={this.changeView.bind(this)}
           />
         </div>
-        <div className="main">{this.renderView()}</div>
+        <div className="main" />
+        {renderView()}
       </div>
     );
   }

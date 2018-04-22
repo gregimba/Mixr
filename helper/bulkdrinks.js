@@ -1,5 +1,6 @@
 const fs = require('fs');
 const db = require('../server/database/models');
+const path = require('path');
 
 let drinks = [];
 
@@ -10,10 +11,10 @@ json = JSON.parse(json).result;
 for (let drink of json) {
   drinks.push({
     name: drink.name,
-    description: drink.descriptionPlain,
-    glass: drink.servedIn,
+    instruction: drink.descriptionPlain,
+    glass: drink.servedIn.text,
     strId: drink.id
   });
 }
 
-db.Drinks.bulkCreate(drinks);
+db.drink.bulkCreate(drinks);

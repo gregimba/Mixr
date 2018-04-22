@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  var Ingredient = sequelize.define('Ingredient', {
+  var ingredient = sequelize.define('ingredient', {
     name: {
       type: DataTypes.STRING,
       unique: true
@@ -7,11 +7,11 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.TEXT,
     strID: DataTypes.STRING
   });
-  Ingredient.associate = models => {
-    Ingredient.belongsToMany(models.User, {
+  ingredient.associate = models => {
+    ingredient.belongsToMany(models.users, {
       through: 'user_ingredient',
       foreignKey: 'ingredientId'
     });
   };
-  return Ingredient;
+  return ingredient;
 };
