@@ -193,7 +193,6 @@ app.get('/user/:userId/drinks', (req, res) => {
       include: [
         {
           model: db.drink,
-          attributes: ['id', 'name', 'image']
         }
       ]
     })
@@ -218,24 +217,16 @@ app.get('/user/:userId/ingredients', (req, res) => {
       include: [
         {
           model: db.ingredient,
-          attributes: ['id', 'name'] // 'image'
         }
       ]
     })
     .then(user => {
       let likedIngredientList = [];
       user[0].ingredients.forEach(ingredient => {
-        let userIngredient = Object.assign(
-          {},
-          {
-            ingredientId: ingredient.dataValues.id,
-            ingredientName: ingredient.dataValues.name
-          }
-        );
-        likedIngredientList.push(userIngredient);
-      });
-      console.log(likedIngredientList);
-      res.send(likedIngredientList);
+        userIngredient.dataValues.image = 'Some Image';
+      likedIngredientList.push(userIngredient.dataValues);
+    })
+    res.json(likedIngredientList)
     })
 
     .catch(err => {
@@ -299,7 +290,7 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
           } else {
             randomIngredient = null;
           }
-          res.send(randomIngredient);
+          res.json(randomIngredient);
         });
     })
     .catch(err => {
