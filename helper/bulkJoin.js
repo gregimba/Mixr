@@ -1,9 +1,11 @@
 const fs = require('fs');
 const db = require('../server/database/models');
+const path = require('path');
 
 let drinks = [];
 
-let jsonDrinks = fs.readFileSync('./drinks.json', 'utf8');
+const pathName = path.join(__dirname, './drinks.json');
+let jsonDrinks = fs.readFileSync(pathName, 'utf8');
 
 jsonDrinks = JSON.parse(jsonDrinks).result;
 
@@ -21,19 +23,19 @@ for (let drink of jsonDrinks) {
 
 let final_array = [];
 for (let join in joins) {
-  db.Drink.findOne({ where: { strId: joins[join].drink } }).then(drink => {
-    db.Ingredient.findOne({ where: { strID: joins[join].ingredient } }).then(
-      ingredient => {
+  db.drink.findOne({ where: { strId: joins[join].drink } }).then(drink => {
+    db.ingredient
+      .findOne({ where: { strID: joins[join].ingredient } })
+      .then(ingredient => {
         final_array.push({
           drinkId: drink.id,
           ingredientId: ingredient.id,
           measure: joins[join].measure
         });
-      }
-    );
+      });
   });
 }
 
 setTimeout(function() {
-  db.DrinkIngredient.bulkCreate(final_array);
+  db.drinkIngredient.bulkCreate(final_array);
 }, 30000);
