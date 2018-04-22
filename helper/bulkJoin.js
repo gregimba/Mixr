@@ -37,5 +37,5 @@ for (let join in joins) {
 }
 
 setTimeout(function() {
-  db.drinkIngredient.bulkCreate(final_array);
+  db.drinkingredient.bulkCreate(final_array);
 }, 30000);
