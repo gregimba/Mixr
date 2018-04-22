@@ -20,7 +20,7 @@ const matchUserWithDrinks = async userId =>
     let drinkIngredientMatches = [];
     likedIngredients.forEach(ingredient => {
       drinkIngredientMatches.push(
-        db.drinkIngredient.findAll({
+        db.drinkingredient.findAll({
           where: {
             ingredientId: ingredient
           }
@@ -41,7 +41,7 @@ const matchUserWithDrinks = async userId =>
     let drinksWithUser = [];
     possibleDrinkMatches.forEach(drink => {
       drinksWithUser.push(
-        db.drinkIngredient.findAll({
+        db.drinkingredient.findAll({
           where: {
             drinkId: drink
           },
@@ -60,7 +60,7 @@ const matchUserWithDrinks = async userId =>
     drinksWithUser.forEach(drink => {
       const id = drink[0].dataValues.drinkId;
       drink.forEach(ingredient => {
-        if (ingredient.Ingredient.Users.length === 0) {
+        if (ingredient.ingredient.users.length === 0) {
           if (!invalidDrinks.includes(id)) {
             invalidDrinks.push(id);
           }
