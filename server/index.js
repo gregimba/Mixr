@@ -1,3 +1,6 @@
+if (process.env.NODE_ENV != 'production') {
+  require('dotenv').config();
+}
 const express = require('express');
 const path = require('path');
 const pg = require('pg');
@@ -6,6 +9,7 @@ const { sequelize, Sequelize } = require('../server/database/models');
 const db = sequelize.models;
 const Op = Sequelize.Op;
 const matchUserWithDrinks = require('../helper/matchUserWithDrinks');
+const searchImage = require('../helper/imageSearch');
 
 const app = express();
 const passport = require('passport');
@@ -20,9 +24,6 @@ app.use('/', express.static(path.join(__dirname, '../client/dist')));
 const User = require('./database');
 
 app.set('view engine', 'ejs');
-if (process.env.NODE_ENV != 'production') {
-  require('dotenv').config();
-}
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -223,7 +224,7 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
       include: [{
         model: db.Ingredient,
       }]
-      }).then(user => {
+      }).then(async user => {
         // Creates a list of all the ingrdients in the database
         let listOfAllIngredients = [];
         ingredients.forEach(allIngredients => {
@@ -251,7 +252,8 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
       let randomIngredient;
       if (notLikedIngredientList.length > 0){
         randomIngredient = notLikedIngredientList[Math.floor(Math.random()*notLikedIngredientList.length)];
-        randomIngredient.image = 'IMAGE';
+        randomIngredient.image = await searchImage(randomIngredient.name);
+        randomIngredient.image = randomIngredient.image[0].url;
       } else {
         randomIngredient = null;
       }
