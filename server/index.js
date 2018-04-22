@@ -152,7 +152,7 @@ app.get('/drink/:drinkId', (req, res) => {
       where: { id: drinkID }
     })
     .then(singleDrink => {
-      db.drinkIngredient
+      db.drinkingredient
         .findAll({
           where: { drinkId: drinkID },
           include: [
@@ -162,6 +162,7 @@ app.get('/drink/:drinkId', (req, res) => {
           ]
         })
         .then(singleDrinkIngredients => {
+          console.log(singleDrinkIngredients)
           let drinkIngredients = {};
 
           singleDrinkIngredients.forEach(drinkIngredient => {
