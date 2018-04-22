@@ -14,6 +14,7 @@ class Ingredient extends Component {
 
     this.getIngredient = this.getIngredient.bind(this);
     this.getLikedIngredient = this.getLikedIngredient.bind(this);
+    this.addLikedIngredient = this.addLikedIngredient.bind(this);
   }
 
   componentDidMount() {
@@ -45,21 +46,19 @@ class Ingredient extends Component {
   }
 
   addLikedIngredient() {
-    axios.post(`http://localhost:3000/user/${1}/ingredients/${1}`);
+    axios
+      .post(`http://localhost:3000/user/${1}/ingredients/${1}`, {
+        userId: `${1}`,
+        ingredientId: `${1}`
+      })
+      .then(res => {
+        console.log(res);
+      });
   }
 
   handleLikeButton() {
-    // let likedIngredients = this.state.likedIngredients;
-    // let currentIngredient = this.state.currentIngredient;
-    // let ingredients = this.state.ingredients;
-    // likedIngredients.push(currentIngredient);
-    // this.getIngredient();
-    // while (!likedIngredients.includes(randomIngredient)) {
-    //   randomIngredient = this.getRandomIngredient(ingredients);
-    //   this.setState({
-    //     currentIngredient: randomIngredient
-    //   });
-    // }
+    this.addLikedIngredient();
+    this.getIngredient();
   }
 
   handleDislikeButton() {
@@ -80,7 +79,9 @@ class Ingredient extends Component {
           </div>
         </div>
         <div className="buttonContainer">
-          <button className="button">LIKE</button>
+          <button className="button" onClick={() => this.handleLikeButton()}>
+            LIKE
+          </button>
           <button className="button" onClick={() => this.handleDislikeButton()}>
             DISLIKE
           </button>
