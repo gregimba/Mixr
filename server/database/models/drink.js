@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  var Drink = sequelize.define('Drink', {
+  var drink = sequelize.define('drink', {
     name: {
       type: DataTypes.STRING,
       unique: true
@@ -9,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
     glass: DataTypes.STRING,
     image: DataTypes.STRING
   });
-  Drink.associate = models => {
-    Drink.belongsToMany(models.users, {
+  drink.associate = models => {
+    drink.belongsToMany(models.users, {
       through: 'user_drink',
       foreignKey: 'drinkId'
     });
   };
-  return Drink;
+  return drink;
 };

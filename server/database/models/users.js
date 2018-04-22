@@ -6,24 +6,22 @@ module.exports = (sequelize, DataTypes) => {
     username: Sequelize.STRING,
     myhash: Sequelize.TEXT,
     mysalt: Sequelize.STRING
-    // isLegal: DataTypes.BOOLEAN
   });
-  passportLocalSequelize.attachToUser(users, {
-    usernameField: 'username',
-    hashField: 'myhash',
-    saltField: 'mysalt'
-    // isLegalField: 'isLegal'
-  });
+
   users.associate = models => {
-    users.belongsToMany(models.Drink, {
+    users.belongsToMany(models.drink, {
       through: 'user_drink',
       foreignKey: 'userId'
     });
-    users.belongsToMany(models.Ingredient, {
+    users.belongsToMany(models.ingredient, {
       through: 'user_ingredient',
       foreignKey: 'userId'
     }); // associations can be defined here
   };
-
+  passportLocalSequelize.attachToUser(users, {
+    usernameField: 'username',
+    hashField: 'myhash',
+    saltField: 'mysalt'
+  });
   return users;
 };

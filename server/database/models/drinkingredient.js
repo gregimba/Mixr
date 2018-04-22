@@ -1,14 +1,14 @@
 module.exports = (sequelize, DataTypes) => {
-  var DrinkIngredient = sequelize.define('DrinkIngredient', {
+  var drinkingredient = sequelize.define('drinkingredient', {
     measure: DataTypes.STRING
   });
-  DrinkIngredient.associate = models => {
-    DrinkIngredient.belongsTo(models.Drink, {
+  drinkingredient.associate = models => {
+    drinkingredient.belongsTo(models.drink, {
       foreignKey: 'drinkId'
     });
-    DrinkIngredient.belongsTo(models.Ingredient, {
+    drinkingredient.belongsTo(models.ingredient, {
       foreignKey: 'ingredientId'
     });
   };
-  return DrinkIngredient;
+  return drinkingredient;
 };

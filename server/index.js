@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/', express.static(path.join(__dirname, '../client/dist')));
 
-const User = require('./database');
+// const User = require('./database');
 
 app.set('view engine', 'ejs');
 
@@ -64,7 +64,7 @@ app.get('/register', function(req, res) {
 });
 
 app.post('/register', function(req, res) {
-  console.log(req.body);
+  // console.log(req.body);
   db.users.register(
     new db.users({ username: req.body.username }),
     req.body.password,
@@ -105,26 +105,21 @@ function isLoggedIn(req, res, next) {
   res.redirect('/login');
 }
 
+// Checking on session to retrieve userId
 app.get('/session', isLoggedIn, function(req, res) {
-  console.log(req.session.passport.user, '=====');
   db.users
     .find({
       where: {
         username: req.session.passport.user
       }
-      // include: [
-      //   {
-      //     model: db.Ingredient,
-      //     attributes: ['id']
-      //   }
-      // ]
     })
-    .then(function(a) {
-      console.log(a, '=fjdlksfjdlksjflks');
-      let string = a;
-      res.send(string);
+    .then(user => {
+      res.send(user);
+    })
+    .catch(err => {
+      console.error('!!Err: ', err);
+      res.sendStatus(404);
     });
-  // res.send(req.session);
 });
 
 // Adding user "liked" ingrindents to the DB
@@ -216,20 +211,19 @@ app.get('/user/:userId/drinks', (req, res) => {
 // Array of ingredients matches for user, returns array of all 'liked' ingredients
 app.get('/user/:userId/ingredients', (req, res) => {
   let userID = req.params.userId;
-  console.log('fjdsao;fjdslak;fjdlsk;ajfldks;=== userID:', userID);
   db.users
     .findAll({
       where: { id: userID },
       include: [
         {
-          model: db.Ingredient,
+          model: db.ingredient,
           attributes: ['id', 'name'] // 'image'
         }
       ]
     })
     .then(user => {
       let likedIngredientList = [];
-      user[0].Ingredients.forEach(ingredient => {
+      user[0].ingredients.forEach(ingredient => {
         let userIngredient = Object.assign(
           {},
           {
@@ -239,14 +233,12 @@ app.get('/user/:userId/ingredients', (req, res) => {
         );
         likedIngredientList.push(userIngredient);
       });
-      console.log(likedIngredientList);
       res.send(likedIngredientList);
     })
-    res.json(likedIngredientList)
-  })
-  .catch( err => {
-    console.log("!!!Error:", err)
-  });
+
+    .catch(err => {
+      console.log('!!!Error:', err);
+    });
 });
 
 // Returns a Single "non-liked" ingredient
@@ -254,54 +246,64 @@ app.get('/user/:userId/ingredients', (req, res) => {
 app.get('/user/:userId/randomIngredient', (req, res) => {
   let userID = req.params.userId;
 
-  db.Ingredient.findAll({})
-  .then( ingredients => {
-    db.User.findAll({
-      where: { id: userID },
-      include: [{
-        model: db.Ingredient,
-      }]
-      }).then(async user => {
-        // Creates a list of all the ingrdients in the database
-        let listOfAllIngredients = [];
-        ingredients.forEach(allIngredients => {
-          listOfAllIngredients.push(allIngredients.dataValues);
-        });
+  db.ingredient
+    .findAll({})
+    .then(ingredients => {
+      db.users
+        .findAll({
+          where: { id: userID },
+          include: [
+            {
+              model: db.ingredient
+            }
+          ]
+        })
+        .then(user => {
+          // Creates a list of all the ingrdients in the database
 
-        // Creates a list of all the 'liked' ingredients for a user
-        let likedIngredientList = [];
-        user[0].Ingredients.forEach(userIngredient => {
-          likedIngredientList.push(userIngredient.dataValues);
-        });
+          let listOfAllIngredients = [];
+          ingredients.forEach(allIngredients => {
+            listOfAllIngredients.push(allIngredients.dataValues);
+          });
 
-        // Creates a list of 'non-liked' ingredients
-        let notLikedIngredientList = [];
+          // Creates a list of all the 'liked' ingredients for a user
+          let likedIngredientList = [];
+          user[0].ingredients.forEach(userIngredient => {
+            likedIngredientList.push(userIngredient.dataValues);
+          });
 
-        listOfAllIngredients.forEach( allIngredient => {
-          let notLikedCheck = likedIngredientList.filter(ingredient => (ingredient.strID === allIngredient.strID ));
+          // Creates a list of 'non-liked' ingredients
+          let notLikedIngredientList = [];
 
-          if( notLikedCheck.length === 0 ){
-            notLikedIngredientList.push(allIngredient);
+          listOfAllIngredients.forEach(allIngredient => {
+            let notLikedCheck = likedIngredientList.filter(
+              ingredient => ingredient.strID === allIngredient.strID
+            );
+
+            if (notLikedCheck.length === 0) {
+              notLikedIngredientList.push(allIngredient);
+            }
+          });
+          // Selects a random index in the 'non-liked' list and
+          // sends back an object with one random 'non-liked' ingredient
+          let randomIngredient;
+          if (notLikedIngredientList.length > 0) {
+            randomIngredient =
+              notLikedIngredientList[
+                Math.floor(Math.random() * notLikedIngredientList.length)
+              ];
+            randomIngredient.image = 'IMAGE';
+          } else {
+            randomIngredient = null;
           }
-      });
-      // Selects a random index in the 'non-liked' list and
-      // sends back an object with one random 'non-liked' ingredient
-      let randomIngredient;
-      if (notLikedIngredientList.length > 0){
-        randomIngredient = notLikedIngredientList[Math.floor(Math.random()*notLikedIngredientList.length)];
-        randomIngredient.image = await searchImage(randomIngredient.name);
-        randomIngredient.image = randomIngredient.image[0].url;
-      } else {
-        randomIngredient = null;
-      }
-      res.json(randomIngredient)
+          res.send(randomIngredient);
+        });
     })
-  })
-  .catch(err => {
-    console.log('!!!Error:', err);
-  });
+    .catch(err => {
+      console.log('!!!Error:', err);
+    });
 });
 
 // sequelize.sync().then(() => {
-  app.listen(3000, () => console.log('Example app listening on port 3000!'));
+app.listen(3000, () => console.log('Example app listening on port 3000!'));
 // });
