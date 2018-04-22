@@ -6,7 +6,7 @@ require('dotenv').config();
 const db = {};
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME,
+  'mixr',
   process.env.DB_USERNAME,
   process.env.DB_PASSWORD,
   {
