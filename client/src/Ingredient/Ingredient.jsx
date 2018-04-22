@@ -11,13 +11,21 @@ class Ingredient extends Component {
       currentIngredient: {}
       // userId: props.userID
     };
+
+    this.getIngredient = this.getIngredient.bind(this);
+    this.getLikedIngredient = this.getLikedIngredient.bind(this);
   }
 
   componentDidMount() {
+    this.getIngredient();
+    this.getLikedIngredient();
+  }
+
+  getIngredient() {
     axios
       .get(`http://localhost:3000/user/${1}/randomIngredient`)
       .then(res => {
-        console.log(res);
+        console.log('===', res);
         this.setState({
           currentIngredient: res.data
         });
@@ -25,6 +33,19 @@ class Ingredient extends Component {
       .catch(err => {
         console.log('Error: error retrieving ingredients', err);
       });
+  }
+
+  getLikedIngredient() {
+    axios.get(`http://localhost:3000/user/${1}/ingredients`).then(res => {
+      console.log('----', res);
+      this.setState({
+        likedIngredients: res.data
+      });
+    });
+  }
+
+  addLikedIngredient() {
+    axios.post(`http://localhost:3000/user/${1}/ingredients/${1}`);
   }
 
   handleLikeButton() {
@@ -42,16 +63,7 @@ class Ingredient extends Component {
   }
 
   handleDislikeButton() {
-    // let likedIngredients = this.state.likedIngredients;
-    // let currentIngredient = this.state.currentIngredient;
-    // let ingredients = this.state.ingredients;
-    // let randomIngredient = this.getRandomIngredient(ingredients);
-    // while (!likedIngredients.includes(randomIngredient)) {
-    //   randomIngredient = this.getRandomIngredient(ingredients);
-    //   this.setState({
-    //     currentIngredient: randomIngredient
-    //   });
-    // }
+    this.getIngredient();
   }
 
   render() {
@@ -69,7 +81,9 @@ class Ingredient extends Component {
         </div>
         <div className="buttonContainer">
           <button className="button">LIKE</button>
-          <button className="button">DISLIKE</button>
+          <button className="button" onClick={() => this.handleDislikeButton()}>
+            DISLIKE
+          </button>
         </div>
       </div>
     );
