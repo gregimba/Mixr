@@ -4,7 +4,8 @@ const path = require('path');
 
 let drinks = [];
 
-let json = fs.readFileSync('./drinks.json', 'utf8');
+const pathName = path.join(__dirname, './drinks.json');
+let json = fs.readFileSync(pathName, 'utf8');
 
 json = JSON.parse(json).result;
 
