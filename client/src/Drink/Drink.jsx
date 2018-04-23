@@ -1,12 +1,12 @@
 import React from 'react';
-import './Drink.css';
 import axios from 'axios';
+import './Drink.css';
 
 class Drink extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      drink: false
+      drink: false,
     };
     this.getIngredients = this.getIngredients.bind(this);
   }
@@ -19,12 +19,11 @@ class Drink extends React.Component {
   }
 
   getIngredients() {
-    axios
-      .get(`http://138.68.14.117:3000/drink/${this.props.drink.id}`)
-      .then(res => {
+    axios.get(`http://138.68.14.117:3000/drink/${this.props.drink.id}`)
+      .then((res) => {
         this.setState({ drink: res.data });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }
@@ -36,9 +35,9 @@ class Drink extends React.Component {
       for (let ing in this.state.drink.ingredients) {
         list.push(this.state.drink.ingredients[ing]);
       }
-      list = list.map(ing => {
-        return <li>{ing}</li>;
-      });
+      list = list.map(ing => (
+        <li>{ing}</li>
+      ));
     }
 
     return (
@@ -49,9 +48,8 @@ class Drink extends React.Component {
         <div className="drink-image">
           <img
             className="drink-object"
-            src={`http://assets.absolutdrinks.com/drinks/400x400/${
-              this.props.drink.strId
-            }.png`}
+            src={`http://assets.absolutdrinks.com/drinks/400x400/${this.props.drink.strId}.png`}
+            alt=""
           />
         </div>
         <div className="drink-title">{this.props.drink.name}</div>
