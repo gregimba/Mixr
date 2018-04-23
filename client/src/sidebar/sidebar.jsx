@@ -1,18 +1,18 @@
 import React from 'react';
-import './Sidebar.css';
+import DrinkListEntry from '../DrinkListEntry/DrinkListEntry';
+import './sidebar.css';
 
 const Sidebar = props => (
   <div className="drink-list">
-    <div className="dirnk-list-title" onClick={props.handleClick}>
-      {props.drink}
-    </div>
-    <div>
-      <img
-        className="drink-list-entry-object"
-        src={'images url goes here...'}
-        onClick={props.handleClick}
-      />
-    </div>
+    {props.drinks.map(
+      drink => (
+        <DrinkListEntry 
+          key={drink.id} 
+          drink={drink} 
+          handleClick={props.handleClick} 
+        />
+      )
+    )}
   </div>
 );
 

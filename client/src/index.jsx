@@ -4,7 +4,7 @@ import axios from 'axios';
 import Ingredient from './Ingredient/Ingredient';
 import Drink from './Drink/Drink';
 // import DrinkListEntry from './DrinkListEntry/DrinkListEntry';
-import Sidebar from './Sidebar/Sidebar';
+import Sidebar from './sidebar/sidebar.jsx';
 
 class App extends Component {
   constructor(props) {
@@ -13,22 +13,26 @@ class App extends Component {
     this.state = {
       view: 'ingredient',
       currentIngredient: {},
-      MatchedDrinks: [],
+      matchedDrinks: [],
       currentDrink: {},
       userId: ''
     };
 
     this.getIngredient = this.getIngredient.bind(this);
+    this.changeView = this.changeView.bind(this);
   }
 
   componentDidMount() {
     axios.get(`http://localhost:3000/session`).then(res => {
-      this.setState(
-        {
-          userId: res.data.id
-        },
-        this.getIngredient
-      );
+      axios.get(`http://localhost:3000/user/${res.data.id}/drinks`).then(data => {
+        this.setState(
+          {
+            userId: res.data.id,
+            matchedDrinks: data.data
+          },
+          this.getIngredient
+        );
+      });
     });
   }
 
@@ -61,14 +65,16 @@ class App extends Component {
       .post(
         `http://localhost:3000/user/${this.state.userId}/ingredients/${
           this.state.currentIngredient.id
-        }`,
-        {
-          userId: `${1}`,
-          ingredientId: `${1}`
-        }
+        }`
       )
       .then(res => {
         console.log('succesfully added');
+        const matchedDrinks = this.state.matchedDrinks.concat(res.data);
+        this.setState(
+          {
+            matchedDrinks
+          }
+        )
       });
   }
 
@@ -89,10 +95,9 @@ class App extends Component {
   }
 
   changeView(option, target) {
-    let MatchedDrinks = this.state.MatchedDrinks;
     this.setState({
       view: option,
-      currentDrink: MatchedDrinks[MatchedDrinks.indexOf(target)]
+      currentDrink: target
     });
   }
 
@@ -128,8 +133,8 @@ class App extends Component {
       <div className="App">
         <div className="sidebar">
           <Sidebar
-            drinks={this.state.MatchedDrinks}
-            handleClick={this.changeView.bind(this)}
+            drinks={this.state.matchedDrinks}
+            handleClick={this.changeView}
           />
         </div>
         <div className="main" />
