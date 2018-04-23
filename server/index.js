@@ -211,7 +211,7 @@ app.get('/user/:userId/drinks', (req, res) => {
         userDrink = userDrink.dataValues;
         let strID = userDrink.strId;
         userDrink.image = `http://assets.absolutdrinks.com/drinks/400x400/${strID}.png`;
-        userDrinkList.push(userDrink);
+        userDrinkList.unshift(userDrink);
       });
 
 
