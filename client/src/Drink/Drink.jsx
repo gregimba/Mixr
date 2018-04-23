@@ -43,6 +43,9 @@ class Drink extends React.Component {
 
     return (
       <div className="drink-page">
+        <span className="exit-button" onClick={this.props.handleClick}>
+        &times;
+        </span>
         <div className="drink-image">
           <img
             className="drink-object"
@@ -52,12 +55,12 @@ class Drink extends React.Component {
           />
         </div>
         <div className="drink-title">{this.props.drink.name}</div>
-        <div className="drink-instruction">{this.props.drink.instruction}</div>
-        <ul className="drink-ingredients">{list}</ul>
+        <div className="drink-instruction-title">Glass Type:</div>
         <div className="drink-glass">{this.props.drink.glass}</div>
-        <span className="exit-button" onClick={this.props.handleClick}>
-          &times;
-        </span>
+        <div className="drink-instruction-title">Ingredients:</div>
+        <ul className="drink-ingredients">{list}</ul>
+        <div className="drink-instruction-title">Preparation: </div>
+        <div className="drink-instruction">{this.props.drink.instruction}</div>
       </div>
     );
   }
