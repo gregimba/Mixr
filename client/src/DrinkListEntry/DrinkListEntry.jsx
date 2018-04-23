@@ -11,7 +11,7 @@ const DrinkListEntry = props => (
       />
     </div>
     <div className="drink-list-entry-title">
-      <span onClick={() => {props.handleClick('drink', props.drink)}}>
+      <span onClick={() => { props.handleClick('drink', props.drink) }}>
         {props.drink.name}
       </span>
     </div>

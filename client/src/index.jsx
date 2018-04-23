@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 import Ingredient from './Ingredient/Ingredient';
 import Drink from './Drink/Drink';
-// import DrinkListEntry from './DrinkListEntry/DrinkListEntry';
 import Sidebar from './Sidebar/Sidebar';
 
 class App extends Component {
@@ -15,67 +14,57 @@ class App extends Component {
       currentIngredient: {},
       matchedDrinks: [],
       currentDrink: {},
-      userId: ''
+      userId: '',
     };
 
     this.getIngredient = this.getIngredient.bind(this);
-    axios.get(`http://138.68.14.117:3000/session`).then(res => {
-      axios.get(`http://138.68.14.117:3000/user/${res.data.id}/drinks`).then(data=> {
-        this.setState(
-          {
-            userId: res.data.id,
-            matchedDrinks: data.data
-          },
-          this.getIngredient
-        );
-      })
-    });
+    this.handleLikeButton = this.handleLikeButton.bind(this);
+    this.handleDislikeButton = this.handleDislikeButton.bind(this);
+    this.getIngredient = this.getIngredient.bind(this);
+    this.handleExitButton = this.handleExitButton.bind(this);
+    this.changeView = this.changeView.bind(this);
+
+    axios.get('http://138.68.14.117:3000/session')
+      .then((res) => {
+        axios.get(`http://138.68.14.117:3000/user/${res.data.id}/drinks`)
+          .then((data) => {
+            this.setState(
+              {
+                userId: res.data.id,
+                matchedDrinks: data.data,
+              },
+              this.getIngredient,
+            );
+          });
+      });
   }
 
   getIngredient() {
-    axios
-      .get(`http://138.68.14.117:3000/user/${this.state.userId}/randomIngredient`)
-      .then(res => {
+    axios.get(`http://138.68.14.117:3000/user/${this.state.userId}/randomIngredient`)
+      .then((res) => {
         this.setState({
-          currentIngredient: res.data
+          currentIngredient: res.data,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log('Error: error retrieving ingredients', err);
       });
   }
 
-  getLikedIngredient() {
-    axios
-      .get(`http://138.68.14.117:3000/user/${this.state.userId}/ingredients`)
-      .then(res => {
-        console.log(res);
-        this.setState({
-          likedIngredients: res.data
-        });
-      });
-  }
-
   addLikedIngredient() {
-    axios
-      .post(
-        `http://138.68.14.117:3000/user/${this.state.userId}/ingredients/${
-          this.state.currentIngredient.id
-        }`,
-      )
-      .then(res => {
-        console.log('succesfully added');
-        const matchedDrinks = this.state.matchedDrinks;
+    axios.post(`http://138.68.14.117:3000/user/${this.state.userId}
+               /ingredients/${this.state.currentIngredient.id}`)
+      .then((res) => {
+        const { matchedDrinks } = this.state;
         res.data.forEach(drink => matchedDrinks.unshift(drink));
         this.setState({
-          matchedDrinks
+          matchedDrinks,
         });
       });
   }
 
   handleLikeButton() {
     this.addLikedIngredient();
-    this.getLikedIngredient();
     this.getIngredient();
   }
 
@@ -85,14 +74,14 @@ class App extends Component {
 
   handleExitButton() {
     this.setState({
-      view: 'ingredient'
+      view: 'ingredient',
     });
   }
 
   changeView(option, target) {
     this.setState({
       view: option,
-      currentDrink: target
+      currentDrink: target,
     });
   }
 
@@ -105,22 +94,24 @@ class App extends Component {
             <Ingredient
               userId={userId}
               ingredient={currentIngredient}
-              like={this.handleLikeButton.bind(this)}
-              dislike={this.handleDislikeButton.bind(this)}
-              getIngredient={this.getIngredient.bind(this)}
+              like={this.handleLikeButton}
+              dislike={this.handleDislikeButton}
+              getIngredient={this.getIngredient}
             />
           </div>
         );
-      } else {
+      } else if (view === 'drink') {
         return (
           <div className="drink-page">
             <Drink
               drink={this.state.currentDrink}
-              exit={this.handleExitButton.bind(this)}
+              exit={this.handleExitButton}
               handleClick={() => this.handleExitButton()}
             />
           </div>
         );
+      } else {
+        return <p>Error in conditional render, check this.state.view</p>;
       }
     };
 
@@ -129,7 +120,7 @@ class App extends Component {
         <div className="sidebar">
           <Sidebar
             drinks={this.state.matchedDrinks}
-            handleClick={this.changeView.bind(this)}
+            handleClick={this.changeView}
           />
         </div>
         <div className="main" />
