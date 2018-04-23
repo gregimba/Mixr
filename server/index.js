@@ -162,12 +162,13 @@ app.get('/drink/:drinkId', (req, res) => {
           ]
         })
         .then(singleDrinkIngredients => {
-          console.log(singleDrinkIngredients)
           let drinkIngredients = {};
+          // let imageUrl = 'http://assets.absolutdrinks.com/drinks/300x400/${strID}.png'
 
           singleDrinkIngredients.forEach(drinkIngredient => {
-            let ingredientName = drinkIngredient.Ingredient.dataValues.name;
+            let ingredientName = drinkIngredient.ingredient.dataValues.name;
             let ingredientMeasure = drinkIngredient.dataValues.measure;
+            console.log('****Drink IDs', drinkIngredient.ingredient.dataValues.id)
 
             drinkIngredients[ingredientName] = ingredientMeasure;
           });
@@ -199,7 +200,7 @@ app.get('/user/:userId/drinks', (req, res) => {
     })
     .then(user => {
       let userDrinkList = [];
-      user[0].Drinks.forEach(userDrink => {
+      user[0].drinks.forEach(userDrink => {
         userDrinkList.push(userDrink.dataValues);
       });
       res.json(userDrinkList);
@@ -223,10 +224,10 @@ app.get('/user/:userId/ingredients', (req, res) => {
     })
     .then(user => {
       let likedIngredientList = [];
-      user[0].ingredients.forEach(ingredient => {
+      user[0].ingredients.forEach(userIngredient => {
         userIngredient.dataValues.image = 'Some Image';
-      likedIngredientList.push(userIngredient.dataValues);
-    })
+        likedIngredientList.push(userIngredient.dataValues);
+      })
     res.json(likedIngredientList)
     })
 
@@ -254,7 +255,6 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
         })
         .then(async user => {
           // Creates a list of all the ingrdients in the database
-
           let listOfAllIngredients = [];
           ingredients.forEach(allIngredients => {
             listOfAllIngredients.push(allIngredients.dataValues);
