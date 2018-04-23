@@ -1,9 +1,9 @@
 .exit-button {
   color: #aa9;
   font-weight: bold;
-  float: left;
+  float: right;
   cursor: pointer;
-  font-size: 1em;
+  font-size: 2em;
   margin-right: 5px;
 }
 
@@ -12,12 +12,59 @@
 }
 
 .drink-page {
-  cursor: alias;
+  cursor: default;
   height: 600px;
   width: 500px;
-  perspective: 1000px;
   position: relative;
-  margin: auto;
+  margin-top: 30px;
+  margin-left: 10px;
+  margin-right: 40%;
   transition: ease-in;
   word-wrap: break-word;
+}
+
+.drink-title {
+  color: #231f62;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 50px;
+  letter-spacing: 1px;
+  border-bottom: double #555;
+  padding: 0 0 10px;
+  margin-bottom: 20px;
+}
+
+.drink-instruction-title {
+  font-family: 'Lato', sans-serif;
+  font-size: 18px;
+  color: #231f62;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.drink-glass {
+  color: #231f62;
+  font-family: 'Verdana', sans-serif;
+  font-size: 16px;
+  line-height: 26px;
+  text-indent: 30px;
+  margin: 0;
+}
+
+.drink-ingredients{
+  color: #231f62;
+  font-family: 'Verdana', sans-serif;
+  font-size: 16px;
+  line-height: 26px;
+  text-indent: 30px;
+  margin: 0;
+}
+
+.drink-instruction {
+  color: #231f62;
+  font-family: 'Verdana', sans-serif;
+  font-size: 16px;
+  line-height: 26px;
+  margin-left: 30px;
 }
