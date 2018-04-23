@@ -234,7 +234,6 @@ app.get('/user/:userId/ingredients', (req, res) => {
         );
         likedIngredientList.push(userIngredient);
       });
-      console.log(likedIngredientList);
       res.send(likedIngredientList);
     })
 
@@ -262,7 +261,6 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
         })
         .then(async user => {
           // Creates a list of all the ingrdients in the database
-
           let listOfAllIngredients = [];
           ingredients.forEach(allIngredients => {
             listOfAllIngredients.push(allIngredients.dataValues);
@@ -295,9 +293,11 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
                 Math.floor(Math.random() * notLikedIngredientList.length)
               ];
             try {
-            randomIngredient.image = await searchImage(randomIngredient.name);
-            randomIngredient.image = randomIngredient.image[0].url;
-            } catch(err) { console.error('ERROR RETRIEVING IMAGE: ', err); }
+              randomIngredient.image = await searchImage(randomIngredient.name);
+              randomIngredient.image = randomIngredient.image[0].url;
+            } catch (err) {
+              console.error('ERROR RETRIEVING IMAGE: ', err);
+            }
           } else {
             randomIngredient = null;
           }
