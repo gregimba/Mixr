@@ -24,9 +24,9 @@ class App extends Component {
     this.handleExitButton = this.handleExitButton.bind(this);
     this.changeView = this.changeView.bind(this);
 
-    axios.get('http://138.68.14.117:3000/session')
+    axios.get('http://localhost:3000/session')
       .then((res) => {
-        axios.get(`http://138.68.14.117:3000/user/${res.data.id}/drinks`)
+        axios.get(`http://localhost:3000/user/${res.data.id}/drinks`)
           .then((data) => {
             this.setState(
               {
@@ -40,7 +40,7 @@ class App extends Component {
   }
 
   getIngredient() {
-    axios.get(`http://138.68.14.117:3000/user/${this.state.userId}/randomIngredient`)
+    axios.get(`http://localhost:3000/user/${this.state.userId}/randomIngredient`)
       .then((res) => {
         this.setState({
           currentIngredient: res.data,
@@ -52,7 +52,7 @@ class App extends Component {
   }
 
   addLikedIngredient() {
-    axios.post(`http://138.68.14.117:3000/user/${this.state.userId}
+    axios.post(`http://localhost:3000/user/${this.state.userId}
                /ingredients/${this.state.currentIngredient.id}`)
       .then((res) => {
         const { matchedDrinks } = this.state;
