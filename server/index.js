@@ -163,7 +163,6 @@ app.get('/drink/:drinkId', (req, res) => {
         })
         .then(singleDrinkIngredients => {
           let drinkIngredients = {};
-          // let imageUrl = 'http://assets.absolutdrinks.com/drinks/300x400/${strID}.png'
 
           singleDrinkIngredients.forEach(drinkIngredient => {
             let ingredientName = drinkIngredient.ingredient.dataValues.name;
@@ -175,9 +174,14 @@ app.get('/drink/:drinkId', (req, res) => {
 
             drinkIngredients[ingredientName] = ingredientMeasure;
           });
+
+          let strID = singleDrink.dataValues.strId;
+
           singleDrink.dataValues.ingredients = drinkIngredients;
+          singleDrink.dataValues.image = `http://assets.absolutdrinks.com/drinks/400x400/${strID}.png`;
 
           singleDrink = singleDrink.dataValues;
+
           res.json(singleDrink);
         })
         .catch(err => {
@@ -204,8 +208,13 @@ app.get('/user/:userId/drinks', (req, res) => {
     .then(user => {
       let userDrinkList = [];
       user[0].drinks.forEach(userDrink => {
-        userDrinkList.push(userDrink.dataValues);
+        userDrink = userDrink.dataValues;
+        let strID = userDrink.strId;
+        userDrink.image = `http://assets.absolutdrinks.com/drinks/400x400/${strID}.png`;
+        userDrinkList.push(userDrink);
       });
+
+
       res.json(userDrinkList);
     })
     .catch(err => {
@@ -256,7 +265,8 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
             }
           ]
         })
-        .then(async user => {
+        // .then(async user => {
+        .then( user => {
           // Creates a list of all the ingrdients in the database
           let listOfAllIngredients = [];
           ingredients.forEach(allIngredients => {
@@ -289,12 +299,12 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
               notLikedIngredientList[
                 Math.floor(Math.random() * notLikedIngredientList.length)
               ];
-            try {
-              randomIngredient.image = await searchImage(randomIngredient.name);
-              randomIngredient.image = randomIngredient.image[0].url;
-            } catch (err) {
-              console.error('ERROR RETRIEVING IMAGE: ', err);
-            }
+            // try {
+            //   randomIngredient.image = await searchImage(randomIngredient.name);
+            //   randomIngredient.image = randomIngredient.image[0].url;
+            // } catch (err) {
+            //   console.error('ERROR RETRIEVING IMAGE: ', err);
+            // }
           } else {
             randomIngredient = null;
           }
