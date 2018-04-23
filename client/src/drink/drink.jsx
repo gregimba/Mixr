@@ -5,25 +5,24 @@ import axios from 'axios';
 class Drink extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      drink: false
+    };
     this.getIngredients = this.getIngredients.bind(this);
   }
 
   componentWillMount() {
     this.getIngredients();
   }
-  componentDidUpdate() {
+  componentWillUpdate() {
     this.getIngredients();
   }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (this.props.drink.id === nextProps.drink.id) return false;
-    return true;
-  }
+  
   getIngredients() {
     axios
       .get(`http://localhost:3000/drink/${this.props.drink.id}`)
       .then(res => {
-        this.setState({ ingredients: res.data.ingredients });
+        this.setState({ drink: res.data });
       })
       .catch(err => {
         console.log(err);
@@ -31,6 +30,9 @@ class Drink extends React.Component {
   }
 
   render() {
+    console.log(this.state.drink);
+    const list = JSON.stringify(this.state.drink);
+
     return (
       <div className="drink-page">
         <div className="drink-image">
@@ -43,9 +45,7 @@ class Drink extends React.Component {
         </div>
         <div className="drink-title">{this.props.drink.name}</div>
         <div className="drink-instruction">{this.props.drink.instruction}</div>
-        <div className="drink-ingredients">
-          {'drink ingredient goes here...'}
-        </div>
+        <div className="drink-ingredients">{list}</div>
         <div className="drink-glass">{this.props.drink.glass}</div>
         <span className="exit-button" onClick={this.props.handleClick}>
           &times;
