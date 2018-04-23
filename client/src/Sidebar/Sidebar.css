@@ -1,10 +1,11 @@
 .sidebar {
   padding: 10px;
-  height: auto;
+  height: 800px;
   margin: auto;
-  margin-top: 30px;
+  margin-top: 4px;
+  margin-right: 4px;
   margin-left: 10px;
-  width: 33.6%;
+  width: 400px;
   font-family: 'Lato', sans-serif;
   font-size: 1.4em;
   color: #222;
@@ -14,6 +15,7 @@
   border: 2px solid black;
   text-align: center;
   float: right;
+  overflow: scroll;
 }
 
 .drink-list {
@@ -24,8 +26,7 @@
   padding: 10px;
   border-radius: 10px;
   /* font-family: 'Droid Sans', sans-serif; */
-  background-color: rgba(34, 49, 63, 0.8);
-  color: #fff;
+  color: #231f62;
   transition: 0.2s ease-out;
   margin-right: 20px;
 
