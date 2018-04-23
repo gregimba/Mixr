@@ -20,7 +20,7 @@ class Drink extends React.Component {
 
   getIngredients() {
     axios
-      .get(`http://localhost:3000/drink/${this.props.drink.id}`)
+      .get(`http://138.68.14.117:3000/drink/${this.props.drink.id}`)
       .then(res => {
         this.setState({ drink: res.data });
       })

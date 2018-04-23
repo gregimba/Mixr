@@ -19,8 +19,8 @@ class App extends Component {
     };
 
     this.getIngredient = this.getIngredient.bind(this);
-    axios.get(`http://localhost:3000/session`).then(res => {
-      axios.get(`http://localhost:3000/user/${res.data.id}/drinks`).then(data=> {
+    axios.get(`http://138.68.14.117:3000/session`).then(res => {
+      axios.get(`http://138.68.14.117:3000/user/${res.data.id}/drinks`).then(data=> {
         this.setState(
           {
             userId: res.data.id,
@@ -34,7 +34,7 @@ class App extends Component {
 
   getIngredient() {
     axios
-      .get(`http://localhost:3000/user/${this.state.userId}/randomIngredient`)
+      .get(`http://138.68.14.117:3000/user/${this.state.userId}/randomIngredient`)
       .then(res => {
         this.setState({
           currentIngredient: res.data
@@ -47,7 +47,7 @@ class App extends Component {
 
   getLikedIngredient() {
     axios
-      .get(`http://localhost:3000/user/${this.state.userId}/ingredients`)
+      .get(`http://138.68.14.117:3000/user/${this.state.userId}/ingredients`)
       .then(res => {
         console.log(res);
         this.setState({
@@ -59,7 +59,7 @@ class App extends Component {
   addLikedIngredient() {
     axios
       .post(
-        `http://localhost:3000/user/${this.state.userId}/ingredients/${
+        `http://138.68.14.117:3000/user/${this.state.userId}/ingredients/${
           this.state.currentIngredient.id
         }`,
       )
