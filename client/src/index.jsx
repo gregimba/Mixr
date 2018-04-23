@@ -12,76 +12,80 @@ class App extends Component {
 
     this.state = {
       view: 'ingredient',
-      // likedIngredients: [],
-      // currentIngredient: {},
+      currentIngredient: {},
       MatchedDrinks: [],
       currentDrink: {},
       userId: ''
     };
 
-    // this.getIngredient = this.getIngredient.bind(this);
+    this.getIngredient = this.getIngredient.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     axios.get(`http://localhost:3000/session`).then(res => {
-      console.log(res.data.id);
       this.setState(
         {
           userId: res.data.id
-        }
-        // this.getIngredient
+        },
+        this.getIngredient
       );
     });
   }
 
-  // getIngredient() {
-  //   axios
-  //     .get(`http://localhost:3000/user/${this.state.userId}/randomIngredient`)
-  //     .then(res => {
-  //       console.log(res);
-  //       this.setState({
-  //         currentIngredient: res.data
-  //       });
-  //     })
-  //     .catch(err => {
-  //       console.log('Error: error retrieving ingredients', err);
-  //     });
-  // }
+  getIngredient() {
+    axios
+      .get(`http://localhost:3000/user/${this.state.userId}/randomIngredient`)
+      .then(res => {
+        this.setState({
+          currentIngredient: res.data
+        });
+      })
+      .catch(err => {
+        console.log('Error: error retrieving ingredients', err);
+      });
+  }
 
-  // handleLikeButton() {
-  //   let likedIngredients = this.state.likedIngredients;
-  //   let currentIngredient = this.state.currentIngredient;
-  //   let ingredients = this.state.ingredients;
-  //   likedIngredients.push(currentIngredient);
-  //   this.getIngredient();
-  //   while (!likedIngredients.includes(randomIngredient)) {
-  //     randomIngredient = this.getRandomIngredient(ingredients);
-  //     this.setState({
-  //       currentIngredient: randomIngredient
-  //     });
-  //   }
-  // }
+  getLikedIngredient() {
+    axios
+      .get(`http://localhost:3000/user/${this.state.userId}/ingredients`)
+      .then(res => {
+        console.log(res);
+        this.setState({
+          likedIngredients: res.data
+        });
+      });
+  }
 
-  // handleDislikeButton() {
-  //   let likedIngredients = this.state.likedIngredients;
-  //   let currentIngredient = this.state.currentIngredient;
-  //   let ingredients = this.state.ingredients;
-  //   let randomIngredient = this.getRandomIngredient(ingredients);
-  //   while (!likedIngredients.includes(randomIngredient)) {
-  //     randomIngredient = this.getRandomIngredient(ingredients);
-  //     this.setState({
-  //       currentIngredient: randomIngredient
-  //     });
-  //   }
-  // }
+  addLikedIngredient() {
+    axios
+      .post(
+        `http://localhost:3000/user/${this.state.userId}/ingredients/${
+          this.state.currentIngredient.id
+        }`,
+        {
+          userId: `${1}`,
+          ingredientId: `${1}`
+        }
+      )
+      .then(res => {
+        console.log('succesfully added');
+      });
+  }
+
+  handleLikeButton() {
+    this.addLikedIngredient();
+    this.getLikedIngredient();
+    this.getIngredient();
+  }
+
+  handleDislikeButton() {
+    this.getIngredient();
+  }
 
   handleExitButton() {
-    this.setState(
-      {
-        view: 'ingredient'
-      }
-      // this.getIngredient
-    );
+    this.setState({
+      view: 'ingredient'
+    });
   }
 
   changeView(option, target) {
@@ -94,15 +98,16 @@ class App extends Component {
 
   render() {
     const renderView = () => {
-      const { view, userId } = this.state;
+      const { view, userId, currentIngredient } = this.state;
       if (view === 'ingredient') {
         return (
           <div className="ingredient-page">
             <Ingredient
               userId={userId}
-              // ingredient={currentIngredient}
-              // like={this.handleLikeButton.bind(this)}
-              // dislike={this.handleDislikeButton.bind(this)}
+              ingredient={currentIngredient}
+              like={this.handleLikeButton.bind(this)}
+              dislike={this.handleDislikeButton.bind(this)}
+              getIngredient={this.getIngredient.bind(this)}
             />
           </div>
         );

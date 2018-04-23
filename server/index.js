@@ -168,7 +168,10 @@ app.get('/drink/:drinkId', (req, res) => {
           singleDrinkIngredients.forEach(drinkIngredient => {
             let ingredientName = drinkIngredient.ingredient.dataValues.name;
             let ingredientMeasure = drinkIngredient.dataValues.measure;
-            console.log('****Drink IDs', drinkIngredient.ingredient.dataValues.id)
+            console.log(
+              '****Drink IDs',
+              drinkIngredient.ingredient.dataValues.id
+            );
 
             drinkIngredients[ingredientName] = ingredientMeasure;
           });
@@ -194,7 +197,7 @@ app.get('/user/:userId/drinks', (req, res) => {
       where: { id: userID },
       include: [
         {
-          model: db.drink,
+          model: db.drink
         }
       ]
     })
@@ -218,7 +221,7 @@ app.get('/user/:userId/ingredients', (req, res) => {
       where: { id: userID },
       include: [
         {
-          model: db.ingredient,
+          model: db.ingredient
         }
       ]
     })
@@ -227,8 +230,8 @@ app.get('/user/:userId/ingredients', (req, res) => {
       user[0].ingredients.forEach(userIngredient => {
         userIngredient.dataValues.image = 'Some Image';
         likedIngredientList.push(userIngredient.dataValues);
-      })
-    res.json(likedIngredientList)
+      });
+      res.json(likedIngredientList);
     })
 
     .catch(err => {
@@ -287,9 +290,11 @@ app.get('/user/:userId/randomIngredient', (req, res) => {
                 Math.floor(Math.random() * notLikedIngredientList.length)
               ];
             try {
-            randomIngredient.image = await searchImage(randomIngredient.name);
-            randomIngredient.image = randomIngredient.image[0].url;
-            } catch(err) { console.error('ERROR RETRIEVING IMAGE: ', err); }
+              randomIngredient.image = await searchImage(randomIngredient.name);
+              randomIngredient.image = randomIngredient.image[0].url;
+            } catch (err) {
+              console.error('ERROR RETRIEVING IMAGE: ', err);
+            }
           } else {
             randomIngredient = null;
           }
