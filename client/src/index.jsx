@@ -47,7 +47,7 @@ class App extends Component {
 
   getLikedIngredient() {
     axios
-      .get(`http://localhost:3000/user/${this.state.userId}/ingredients`)
+      .get(`http://138.68.14.117:3000/user/${this.state.userId}/ingredients`)
       .then(res => {
         console.log(res);
         this.setState({
