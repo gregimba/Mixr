@@ -8,9 +8,7 @@
   font-family: 'Lato', sans-serif;
   font-size: 1.4em;
   color: #222;
-  background-color: #8e9498;
   border-radius: 10px;
-  box-shadow: 43x 3px 2px #333;
   opacity: 1;
   float: left;
   border: 2px solid black;
@@ -34,7 +32,8 @@
   /* color: #bbc3c8;
   background: #292929; */
   display: inline-block;
-  font-family: 'Georgia', serif; font-style: italic;
+  font-family: 'Georgia', serif;
+  font-style: italic;
   font-size: 20px;
   line-height: 22px;
   /* margin: 0 0 20px 18px; */

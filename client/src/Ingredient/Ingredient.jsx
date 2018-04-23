@@ -12,11 +12,11 @@ const Ingredient = props => {
         </div>
       </div>
       <div className="buttonContainer">
-        <button className="button" onClick={() => props.like()}>
-          LIKE
-        </button>
         <button className="button" onClick={() => props.dislike()}>
           DISLIKE
+        </button>
+        <button className="button" onClick={() => props.like()}>
+          LIKE
         </button>
       </div>
     </div>
