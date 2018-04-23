@@ -106,7 +106,10 @@ const matchUserWithDrinks = async userId =>
             }
           })
           .then(drink => {
-            newDrinks.push(drink.dataValues);
+            drink = drink.dataValues;
+            let strID = drink.strId;
+            drink.image = `http://assets.absolutdrinks.com/drinks/400x400/${strID}.png`;
+            newDrinks.push(drink);
           })
       );
     });
