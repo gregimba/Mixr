@@ -7,8 +7,8 @@ const db = {};
 
 const sequelize = new Sequelize(
   'mixr',
-  process.env.DB_USERNAME,
-  process.env.DB_PASSWORD,
+  'postgres',
+  '1234',
   {
     host: 'localhost',
     dialect: 'postgres',
