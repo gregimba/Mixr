@@ -1,5 +1,5 @@
 .exit-button {
-  color: #AA9;
+  color: #aa9;
   font-weight: bold;
   float: left;
   cursor: pointer;
@@ -8,7 +8,7 @@
 }
 
 .exit-button:hover {
-  color: #AC2500;
+  color: #ac2500;
 }
 
 .drink-page {
