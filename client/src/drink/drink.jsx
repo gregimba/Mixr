@@ -15,15 +15,15 @@ class Drink extends React.Component {
     this.getIngredients();
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (this.props.drink.id === nextProps.drink.id) return false;
+    return true;
+  }
   getIngredients() {
     axios
       .get(`http://localhost:3000/drink/${this.props.drink.id}`)
       .then(res => {
-        console.log(res.data.ingredients);
-        if (res.data.id === this.props.drink.id) {
-        } else {
-          this.setState({ ingredients: res.data.ingredients });
-        }
+        this.setState({ ingredients: res.data.ingredients });
       })
       .catch(err => {
         console.log(err);
@@ -31,9 +31,6 @@ class Drink extends React.Component {
   }
 
   render() {
-    if(this.props.ingredients !== undefined){
-      console.log(this.props.ingredients);
-    }
     return (
       <div className="drink-page">
         <div className="drink-image">
