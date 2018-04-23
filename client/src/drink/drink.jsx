@@ -17,7 +17,7 @@ class Drink extends React.Component {
   componentWillUpdate() {
     this.getIngredients();
   }
-  
+
   getIngredients() {
     axios
       .get(`http://localhost:3000/drink/${this.props.drink.id}`)
@@ -30,8 +30,16 @@ class Drink extends React.Component {
   }
 
   render() {
-    console.log(this.state.drink);
-    const list = JSON.stringify(this.state.drink);
+    let list = <li> loading </li>;
+    if (this.state.drink) {
+      list = [];
+      for (let ing in this.state.drink.ingredients) {
+        list.push(this.state.drink.ingredients[ing]);
+      }
+      list = list.map(ing => {
+        return <li>{ing}</li>;
+      });
+    }
 
     return (
       <div className="drink-page">
@@ -45,7 +53,7 @@ class Drink extends React.Component {
         </div>
         <div className="drink-title">{this.props.drink.name}</div>
         <div className="drink-instruction">{this.props.drink.instruction}</div>
-        <div className="drink-ingredients">{list}</div>
+        <ul className="drink-ingredients">{list}</ul>
         <div className="drink-glass">{this.props.drink.glass}</div>
         <span className="exit-button" onClick={this.props.handleClick}>
           &times;
