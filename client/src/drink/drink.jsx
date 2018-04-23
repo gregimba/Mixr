@@ -1,7 +1,33 @@
 import React from 'react';
 import './Drink.css';
+import axios from 'axios';
 
 class Drink extends React.Component {
+  constructor(props) {
+    super(props);
+    this.getIngredients = this.getIngredients.bind(this);
+  }
+
+  componentWillMount() {
+    this.getIngredients();
+  }
+
+  componentDidUpdate() {
+    this.getIngredients();
+  }
+
+  getIngredients() {
+    axios
+      .get(`http://localhost:3000/drink/${this.props.drink.id}`)
+      .then(res => {
+        console.log(res.data.ingredients);
+        this.setState({ ingredients: res.data.ingredients})
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   render() {
     return (
       <div className="drink-page">
